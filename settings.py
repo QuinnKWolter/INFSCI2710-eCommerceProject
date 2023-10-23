@@ -15,6 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
 
+# Fake Django SECRET_KEY for development use only
+SECRET_KEY = 'e1x9w2c3e4v5b6n7m8o9p0zaxsfqadsvzxcvlkn'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/

@@ -36,9 +36,6 @@
                                                 <label for="userId" class="form-label fw-bold fs-5">User Profile</label>
                                                 <select id="userId" class="form-control" type="text">
                                                     <option value="" selected disabled>Enter ID between 1 - 6040</option>
-                                                    {% for userId in userIds %}
-                                                        <option value="{{ userId }}">{{ userId }}</option>
-                                                    {% endfor %}
                                                 </select>
                                             </div>
                                             <button class="btn btn-success float-end" id="fetchUser">Fetch User</button>
@@ -101,9 +98,7 @@
                                                 <br>
                                                 <select id="location" class="form-control text-center" type="text" name="location">
                                                     <option value="">None</option>
-                                                    {% for zipcode in zipcodes %}
-                                                        <option value="{{ zipcode }}">{{ zipcode }}</option>
-                                                    {% endfor %}
+         
                                                 </select>
                                                 <br>
                                                 <label for="occupation" class="form-label fw-bold fs-5">Occupation:</label>
