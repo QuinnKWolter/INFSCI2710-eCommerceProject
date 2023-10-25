@@ -20,39 +20,42 @@ INFSCI2710 eCommerce Project
 10. Transaction Summary Interface for below info!!
 	
 Data Aggregation The system must provide data aggregation queries:
-o What are the aggregate sales and profit of the products.
+1. What are the aggregate sales and profit of the products.
 	- Aggregation of the "Transaction" objects by Product?
-o What are the top product categories.
+2. What are the top product categories.
 	- Aggregation of "Transaction" objects by Category?
-o How do the various regions compare by sales volume?
+3. How do the various regions compare by sales volume?
 	- Inventories..... something something?
-o Which businesses are buying given products the most?
+4. Which businesses are buying given products the most?
 	- All transactions where customer "Type" == "Business", sorted
-o Other interesting aggregate queries that you will come up with.
+5. Other interesting aggregate queries that you will come up with.
 	- Will make up as we go
 	
 ## ACTION ITEMS
-Kishor: 
-	1. Continue to work on Product and Category processing/population
-	2. Script for Transactions
-	3. Script for Reviews
-	4. Script for Customers
-	5. Inventories?
-Rody
-	1. Data/Script for Regions (3ish regions?)
-	2. Data/Script for Stores (X stores per region)
-	3. Data/Script for Salespersons (A few mangers, a few associates)
-	4. About Page / Contact Us
-	5. Do the Django Tutorial!
-Logan
-	1. Login System & Sessions (forms.py)
-	2. Populate some fake data in Django Admin
-	3. Very Basic Simple Widgets (Product Widget, etc.)
-	4. Basic skeleton examples for home page, product page, category, sign in/new user, etc.
-	5. Learn about forms.py (will help with adding functionality to skeleton pages)
-Quinn
-	1. More skeleton pages (whatever is left)
-	2. Aggregation dashboard
-	3. CRUD interfaces for all models
-	4. Transaction + Checkout/Payment interfaces + Cart
-	5. Finish models.py
+### Kishor: 
+1. Continue to work on Product and Category processing/population
+2. Script for Transactions
+3. Script for Reviews
+4. Script for Customers
+5. Inventories?
+
+### Rody
+1. Data/Script for Regions (3ish regions?)
+2. Data/Script for Stores (X stores per region)
+3. Data/Script for Salespersons (A few mangers, a few associates)
+4. About Page / Contact Us
+5. Do the Django Tutorial!
+
+### Logan
+1. Login System & Sessions (forms.py)
+2. Populate some fake data in Django Admin
+3. Very Basic Simple Widgets (Product Widget, etc.)
+4. Basic skeleton examples for home page, product page, category, sign in/new user, etc.
+5. Learn about forms.py (will help with adding functionality to skeleton pages)
+   
+### Quinn
+1. More skeleton pages (whatever is left)
+2. Aggregation dashboard
+3. CRUD interfaces for all models
+4. Transaction + Checkout/Payment interfaces + Cart
+5. Finish models.py
