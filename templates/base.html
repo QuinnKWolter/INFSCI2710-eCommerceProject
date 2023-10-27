@@ -9,7 +9,7 @@
     <meta name="author" content="" />
     <link rel="icon" type="image/png" href="/static/img/favicon.png">
 
-    <title>{% block title %}INFSCI2470 - Fair Recommender System{% endblock %}</title>
+    <title>{% block title %}INFSCI2710 - Ecommerce{% endblock %}</title>
 
     <!-- JQuery UI CSS -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -55,10 +55,26 @@
             <div class="navbar-collapse collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
+                        <a href="{% url 'index' %}">home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'product_list' %}">products</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" id="aboutBtn">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="helpBtn">Getting Started</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <P><FONT COLOR = grey> hi {{ user.username }}</FONT></p>
+                        <p><a href="{% url 'logout' %}">Log Out</a></p>
+                    </li>
+                    <li class="nav-item">
+                    {% else %}
+                    <a href="{% url 'login' %}">Log In</a>
+{% endif %}
                     </li>
                 </ul>
             </div>

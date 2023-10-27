@@ -51,10 +51,8 @@ class Region(models.Model):
         return self.name
 
 # Customer Model
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=200)
-    email = models.EmailField()
+class Customer(User):
+    name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15)
     street_address = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
@@ -70,7 +68,7 @@ class Customer(models.Model):
     annual_income = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return self.full_name
+        return self.name
 
 # Order Model
 class Order(models.Model):
@@ -109,7 +107,7 @@ class Cart(models.Model):
 
 # CartItem Model
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 

@@ -1,8 +1,10 @@
 import csv, json
 from .models import *
+from django.shortcuts import render
 import random
-
-from django.views.generic import TemplateView
+from .forms import *
+from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView, ListView
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -29,6 +31,67 @@ def test_ajax(request):
 switch = {
     'test_ajax': {'call': test_ajax},
 }
+
+class login(TemplateView):
+    template_name = "login.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zipcodes'] = ["Test1", "Test2", "Test3"]
+
+
+def new_user(request):
+    if request.method == "POST":
+        form = newUser(request.POST)
+
+        if form.is_valid():
+            temp= form.save(commit=False)
+            temp.kind ="Home"
+            temp.save()
+            return HttpResponseRedirect("/")
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = newUser()
+
+    return render(request, "new_user.html", {"form": form})
+
+def new_company(request):
+    if request.method == "POST":
+        form = newCompany(request.POST)
+        if form.is_valid():
+            temp= form.save(commit=False)
+            temp.kind ="Company"
+            temp.save()
+            return HttpResponseRedirect("/")
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = newCompany()
+
+    return render(request, "new_user.html", {"form": form})
+# Helper objects and functions for AJAX functionality
+switch = {
+    'test_ajax': {'call': test_ajax},
+}
+class product_list(ListView):
+    model = Product
+
+
+
+
+def product_page(request, product_id):
+    user = request.user
+    if(user.is_authenticated):
+        if request.method == "POST":
+            form = confirmAdd(request.POST )
+            if form.is_valid():
+                temp_form = form.save(commit=False)
+                temp_form.product = Product.objects.get(id = product_id)
+                temp_form.customer= Customer.objects.get(id = user.id)
+                temp_form.save()
+                return HttpResponseRedirect("/")
+        else:
+            form = addCart(product=product_id,customer=user, initial={"quantity":1})
+        return render(request, "product_page.html", {"form": form, "product":Product.objects.get(id = product_id)})
 
 def ajax(request):
     """Switch to correct function given POST call
