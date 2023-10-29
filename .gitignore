@@ -1,10 +1,2 @@
-*.env
-.DS_Store
-src/.DS_Store
-
-src/node_modules/
-node_modules/
-
-package-lock.json
-package.json
-
+*.csv
+db.sqlite3
