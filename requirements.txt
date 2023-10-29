@@ -1,2 +1,4 @@
-django==4.1.7
-django-cors-headers==3.14.0
+django==4.2.6
+django-cors-headers==4.3.0
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7

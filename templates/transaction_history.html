@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Transaction History</h1>
+            <ul class="list-group">
+                {% for transaction in transactions %}
+                    <li class="list-group-item">
+                        Transaction {{ transaction.id }} on {{ transaction.date }}
+                        <ul>
+                            {% for item in transaction.items.all %}
+                                <li>{{ item.product.name }} ({{ item.quantity }}) - ${{ item.product.price }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No transactions found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -62,11 +62,11 @@ class Customer(models.Model):
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
     kind = models.CharField(max_length=10, choices=[('Home', 'Home'), ('Business', 'Business')])
-    # Fields for 'Home'
+    # Fields for 'Home' kind users
     marital_status = models.CharField(max_length=10, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
-    # Fields for 'Business'
+    # Fields for 'Business' kind users
     business_category = models.CharField(max_length=100, blank=True, null=True)
     annual_income = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
 
