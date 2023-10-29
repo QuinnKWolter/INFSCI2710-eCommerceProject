@@ -1,285 +1,45 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}INFSCI2470 - Fair Recommender System{% endblock %}
+{% block title %}INFSCI2710 - eCommerce Platform{% endblock %}
 
 {% block load_css %}
-    <link rel="stylesheet" href="{% static "css/index.css" %}">
+<link rel="stylesheet" href="{% static " css /index.css" %}">
 {% endblock %}
 
 {% block load_js %}
-    <script src="{% static "js/index.js" %}"></script>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="{% static " js /index.js" %}"></script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
 {% endblock %}
 
 {% block content %}
-    <img src="{% static 'img/no-image-png-2.png' %}" id="placeholderImage" class="d-none">
-    <img src="{% static 'img/user-profile-picture01.png' %}" id="avatarImage" class="d-none">
-    {% csrf_token %}
-    <!-- Page content-->   
-    <div class="container-fluid p-2">
-        <div class="row pt-2">
-            <div class="col-sm-7 gx-0">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card" style="height: 14em;">
-                            <div class="card-header h-100">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <!-- Space for user profile picture -->
-                                        <img src="{% static 'img/user-profile-picture01.png' %}" class="img-fluid rounded-circle" style="max-height: 12em;">
-                                    </div>
-                                    <div class="col-md-5">
-                                        <form>
-                                            <div class="mb-2">
-                                                <label for="userId" class="form-label fw-bold fs-5">User Profile</label>
-                                                <select id="userId" class="form-control" type="text">
-                                                    <option value="" selected disabled>Enter ID between 1 - 6040</option>
-                                                </select>
-                                            </div>
-                                            <button class="btn btn-success float-end" id="fetchUser">Fetch User</button>
-                                        </form>
-                                        <div>
-                                            <p>
-                                                <b>User: </b><span id="userIdLabel"></span>
-                                                <br><b>Gender: </b><span id="genderLabel"></span>
-                                                <br><b>Age Range: </b><span id="ageLabel"></span>
-                                                <br><b>Occupation: </b><span id="occupationLabel"></span>
-                                                <br><b>Location: </b><span id="locationLabel"></span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <p class="form-label fw-bold fs-5">Recent Interactions</p>
-                                        <ol id="recentInteractions" class="mt-3 h6 text-nowrap" style="max-height: 10em; overflow-y: auto; margin-left: -10px">
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-sm-12">
-                        <div class="card" style="height: 39em;">
-                            <div class="card-header h-100">
-                                <div class="row"> 
-                                    <div id="cluster-column" class="col-sm-10">
-                                        <p class="form-label fw-bold fs-5">User Cluster View</p>
-                                        <div id="chart"></div>
-                                    </div>
-                                    <div class="col-sm-2 px-0">
-                                        <form class="text-center">
-                                            <div class="mb-2">
-                                                <label for="age" class="form-label fw-bold fs-5">Age:</label>
-                                                <br>
-                                                <select id="age" class="form-control text-center" type="text" name="age">
-                                                    <option value="">None</option>
-                                                    <option value="1">Under 18</option>
-                                                    <option value="18">18-24</option>
-                                                    <option value="25">25-34</option>
-                                                    <option value="35">35-44</option>
-                                                    <option value="45">45-59</option>
-                                                    <option value="50">50-55</option>
-                                                    <option value="56">56+</option>
-                                                </select>
-                                                <br>
-                                                <label for="gender" class="form-label fw-bold fs-5">Gender:</label>
-                                                <br>
-                                                <select id="gender" class="form-control text-center" type="text" name="gender">
-                                                    <option value="">None</option>
-                                                    <option value="M">Male</option>
-                                                    <option value="F">Female</option>
-                                                </select>
-                                                <br>
-                                                <label for="location" class="form-label fw-bold fs-5">Location:</label>
-                                                <br>
-                                                <select id="location" class="form-control text-center" type="text" name="location">
-                                                    <option value="">None</option>
-         
-                                                </select>
-                                                <br>
-                                                <label for="occupation" class="form-label fw-bold fs-5">Occupation:</label>
-                                                <br>
-                                                <select id="occupation" class="form-control text-center" type="text" name="occupation">
-                                                    <option value="">None</option>
-                                                    <option value="0">Other or Unspecified</option>
-                                                    <option value="1">Academic/Educator</option>
-                                                    <option value="2">Artist</option>
-                                                    <option value="3">Clerical/Admin</option>
-                                                    <option value="4">College/Grad Student</option>
-                                                    <option value="5">Customer Service</option>
-                                                    <option value="6">Doctor/Health Care</option>
-                                                    <option value="7">Executive/Managerial</option>
-                                                    <option value="8">Farmer</option>
-                                                    <option value="9">Homemaker</option>
-                                                    <option value="10">K-12 Student</option>
-                                                    <option value="11">Lawyer</option>
-                                                    <option value="12">Programmer</option>
-                                                    <option value="13">Retired</option>
-                                                    <option value="14">Sales/Marketing</option>
-                                                    <option value="15">Scientist</option>
-                                                    <option value="16">Self-Employed</option>
-                                                    <option value="17">Technician/Engineer</option>
-                                                    <option value="18">Tradesman/Craftsman</option>
-                                                    <option value="19">Unemployed</option>
-                                                    <option value="20">Writer</option>
-                                                </select>
-                                                <br>
-                                                <label for="top-genre" class="form-label fw-bold fs-5">Top Genre:</label>
-                                                <br>
-                                                <select id="top-genre" class="form-control text-center" type="text" name="top-genre">
-                                                    <option value="">None</option>
-                                                    <option value="action">Action</option>
-                                                    <option value="adventure">Adventure</option>
-                                                    <option value="animation">Animation</option>
-                                                    <option value="children">Children's</option>
-                                                    <option value="comedy">Comedy</option>
-                                                    <option value="crime">Crime</option>
-                                                    <option value="documentary">Documentary</option>
-                                                    <option value="drama">Drama</option>
-                                                    <option value="fantasy">Fantasy</option>
-                                                    <option value="film-noir">Film-Noir</option>
-                                                    <option value="horror">Horror</option>
-                                                    <option value="imax">IMAX</option>
-                                                    <option value="musical">Musical</option>
-                                                    <option value="mystery">Mystery</option>
-                                                    <option value="romance">Romance</option>
-                                                    <option value="sci-fi">Sci-Fi</option>
-                                                    <option value="thriller">Thriller</option>
-                                                    <option value="war">War</option>
-                                                    <option value="western">Western</option>
-                                                </select>
-                                            </div>
-                                            <br>
-                                            <button id="search" class="btn btn-success mb-2">Search</button>
-                                        </form>
-                                    </div>
-                                </div> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="row pb-2">
-                    <div class="col-sm-12">
-                        <div class="card" style="height: 35em;">
-                            <div class="card-header h-100">
-                                <div id="movie-row" class="row d-none">
-                                    <div class="col-sm-8">
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="row">
-                                                    <div class="form-group pe-0">
-                                                        <label for="romance-slider" class="text-nowrap fw-bold">Romance</label>
-                                                        <div id="romance-slider" class="slider my-2">8</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="scifi-slider" class="text-nowrap fw-bold">Sci-Fi</label>
-                                                        <div id="scifi-slider" class="slider my-2">28</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="adventure-slider" class="text-nowrap fw-bold">Adventure</label>
-                                                        <div id="adventure-slider" class="slider my-2">38</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="comedy-slider" class="text-nowrap fw-bold">Comedy</label>
-                                                        <div id="comedy-slider" class="slider my-2">78</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="animation-slider" class="text-nowrap fw-bold">Animation</label>
-                                                        <div id="animation-slider" class="slider my-2">88</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="drama-slider" class="text-nowrap fw-bold">Drama</label>
-                                                        <div id="drama-slider" class="slider my-2">100</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="thriller-slider" class="text-nowrap fw-bold">Thriller</label>
-                                                        <div id="thriller-slider" class="slider my-2">88</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="war-slider" class="text-nowrap fw-bold">War</label>
-                                                        <div id="war-slider" class="slider my-2">68</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="children-slider" class="text-nowrap fw-bold">Children</label>
-                                                        <div id="children-slider" class="slider my-2">28</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="crime-slider" class="text-nowrap fw-bold">Crime</label>
-                                                        <div id="crime-slider" class="slider my-2">18</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="row">
-                                                    <div class="form-group pe-0">
-                                                        <label for="horror-slider" class="text-nowrap fw-bold">Horror</label>
-                                                        <div id="horror-slider" class="slider my-2">8</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="filmnoir-slider" class="text-nowrap fw-bold">Film-Noir</label>
-                                                        <div id="filmnoir-slider" class="slider my-2">0</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="mystery-slider" class="text-nowrap fw-bold">Mystery</label>
-                                                        <div id="mystery-slider" class="slider my-2">25</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="action-slider" class="text-nowrap fw-bold">Action</label>
-                                                        <div id="action-slider" class="slider my-2">50</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="musical-slider" class="text-nowrap fw-bold">Musical</label>
-                                                        <div id="musical-slider" class="slider my-2">75</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="western-slider" class="text-nowrap fw-bold">Western</label>
-                                                        <div id="western-slider" class="slider my-2">88</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="imax-slider" class="text-nowrap fw-bold">IMAX</label>
-                                                        <div id="imax-slider" class="slider my-2">75</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="documentary-slider" class="text-nowrap fw-bold">Documentary</label>
-                                                        <div id="documentary-slider" class="slider my-2">40</div>
-                                                    </div>
-                                                    <div class="form-group pe-0">
-                                                        <label for="fantasy-slider" class="text-nowrap fw-bold">Fantasy</label>
-                                                        <div id="fantasy-slider" class="slider my-2">30</div>
-                                                    </div>
-                                                    <div class="text-center text-nowrap mt-2">
-                                                        <button type="submit" class="btn btn-success ms-0 me-4" id="update-button">Update</button>
-                                                        <button type="submit" class="btn btn-success" id="reset-button">Reset</button>
-                                                    </div>  
-                                                </div>
-                                            </div>
-                                             
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4 text-center">
-                                        <p class="form-label fw-bold fs-5">Top 10 Movies</p>
-                                        <div id="movies-container" style="max-height: 500px; overflow-y: auto;" class = "img-fluid w-100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card" style="height: 18em;">
-                            <div class="card-header h-100">
-                                <p class="form-label fw-bold fs-5">Counterfactual Persona Explorer</p>
-                                <div id="counterfactual-personas" class="row" style="height: 14em; max-height: 14em; overflow-y: auto;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>    
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">Home</h1>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{% url 'register' %}">Register</a></li>
+                <li class="list-group-item"><a href="{% url 'login' %}">Login</a></li>
+                <li class="list-group-item"><a href="{% url 'logout' %}">Logout</a></li>
+                <li class="list-group-item"><a href="{% url 'profile' %}">Profile</a></li>
+                <li class="list-group-item"><a href="{% url 'product_list' %}">Product List</a></li>
+                <li class="list-group-item"><a href="{% url 'search' %}">Search</a></li>
+                <li class="list-group-item"><a href="{% url 'cart' %}">Cart</a></li>
+                <li class="list-group-item"><a href="{% url 'checkout' %}">Checkout</a></li>
+                <li class="list-group-item"><a href="{% url 'transaction_history' %}">Transaction History</a></li>
+                <li class="list-group-item"><a href="{% url 'payment' %}">Payment</a></li>
+                <li class="list-group-item"><a href="{% url 'shipping' %}">Shipping</a></li>
+                <li class="list-group-item"><a href="{% url 'sales_dashboard' %}">Sales Dashboard</a></li>
+                <li class="list-group-item"><a href="{% url 'inventory' %}">Inventory</a></li>
+                <li class="list-group-item"><a href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+                <li class="list-group-item"><a href="{% url 'manage_users' %}">Manage Users</a></li>
+                <li class="list-group-item"><a href="{% url 'manage_products' %}">Manage Products</a></li>
+                <li class="list-group-item"><a href="{% url 'sales_report' %}">Sales Report</a></li>
+                <li class="list-group-item"><a href="{% url 'product_report' %}">Product Report</a></li>
+                <li class="list-group-item"><a href="{% url 'region_report' %}">Region Report</a></li>
+                <li class="list-group-item"><a href="{% url 'admin:index' %}">Admin Site</a></li>
+            </ul>
         </div>
-    </div>     
+    </div>
+</div>
 {% endblock %}
