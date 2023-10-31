@@ -24,6 +24,7 @@ class addCart(forms.ModelForm):
     class Meta:
         model = CartItem
         fields = ("quantity",)
+
         
 class confirmAdd(forms.ModelForm):
     class Meta:

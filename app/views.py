@@ -72,8 +72,23 @@ def new_company(request):
 switch = {
     'test_ajax': {'call': test_ajax},
 }
+
+
 class product_list(ListView):
     model = Product
+    
+def categories(request):
+    category = Category.objects.all()
+    return render(request, "categories.html", {"category_list":category})
+
+
+def category_products(request, category_id):
+    products = Product.objects.filter(category= category_id) 
+    category_name = Category.objects.get(id = category_id)
+    return render(request, "category_product_list.html", {"category_name":category_name, "products_list":products})
+
+
+
 
 def cart(request):
     user = request.user
