@@ -75,8 +75,30 @@ switch = {
 class product_list(ListView):
     model = Product
 
+def cart(request):
+    user = request.user
+    if(user.is_authenticated):
+        customer = Customer.objects.get(id = user.id)
+        cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
+        return render(request, "cart.html", {"user":user, "cart_list":cart_list})
+    else:
+        return login
 
+def empty_cart(request):
+    user = request.user
+    if(user.is_authenticated):
+        ## it does reach here
+        customer = Customer.objects.get(id = user.id)
+        CartItem.objects.filter(customer = customer.pk).delete()
+    return HttpResponseRedirect("/cart")
 
+def delete_cart(request, cart_item_id):
+    user = request.user
+    if(user.is_authenticated):
+        customer = Customer.objects.get(id = user.id)
+        cart_list = CartItem.objects.filter(customer = customer.pk).filter(id = cart_item_id)
+        cart_list.delete()
+    return HttpResponseRedirect("/cart")
 
 def product_page(request, product_id):
     user = request.user
@@ -89,9 +111,11 @@ def product_page(request, product_id):
                 temp_form.customer= Customer.objects.get(id = user.id)
                 temp_form.save()
                 return HttpResponseRedirect("/")
-        else:
-            form = addCart(product=product_id,customer=user, initial={"quantity":1})
+        form = addCart(product=product_id,customer=user, initial={"quantity":1})
         return render(request, "product_page.html", {"form": form, "product":Product.objects.get(id = product_id)})
+    else:
+        return render(request, "product_page.html", {"product":Product.objects.get(id = product_id)})
+
 
 def ajax(request):
     """Switch to correct function given POST call

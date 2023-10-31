@@ -68,12 +68,16 @@
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <P><FONT COLOR = grey> hi {{ user.username }}</FONT></p>
                         <p><a href="{% url 'logout' %}">Log Out</a></p>
                     </li>
                     <li class="nav-item">
+                        <p><a href="{% url 'cart' %}">Cart</a></p>
+                    </li>
+                    <li class="nav-item">
                     {% else %}
-                    <a href="{% url 'login' %}">Log In</a>
+                        <li class="nav-item">
+                        <a href="{% url 'login' %}">Log In</a>
+                        </li>
 {% endif %}
                     </li>
                 </ul>

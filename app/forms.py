@@ -20,7 +20,7 @@ class addCart(forms.ModelForm):
         self.customer = customer
         self.product = product
         super(addCart,self).__init__(*args, **kwargs)
-        self.fields["quantity"] = forms.IntegerField(min_value=0,max_value=Product.objects.get(id = product).stock)
+        self.fields["quantity"] = forms.IntegerField(min_value=1,max_value=Product.objects.get(id = product).stock)
     class Meta:
         model = CartItem
         fields = ("quantity",)

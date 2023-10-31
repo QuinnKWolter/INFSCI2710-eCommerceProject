@@ -14,6 +14,7 @@
         <p>in stock {{product.stock}}</p>
     {% endif %}
     </body>
+    {% if user.is_authenticated %}
     <form method="post">
         {% csrf_token %}
         {{ form }}
@@ -21,4 +22,5 @@
         
         <button type="submit">add to cart</button>
         </form>
+    {% endif %}
 {% endblock%}

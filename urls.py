@@ -26,6 +26,9 @@ urlpatterns = [
     path("accounts/new_company", views.new_company, name = 'new_company'),
     path("products/", views.product_list.as_view(), name='product_list'),
     path("products/<int:product_id>", views.product_page, name='product_page'),
+    path("cart/", views.cart, name='cart'),
+    path("empty_cart/", views.empty_cart, name='empty_cart'),
+    path("delete_cart/<int:cart_item_id>", views.delete_cart, name='delete_cart'),
 
     # Ajax
     path('ajax/', views.ajax)
