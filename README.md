@@ -1,9 +1,9 @@
 # INFSCI2710-eCommerceProject
 INFSCI2710 eCommerce Project
 
-🟥: = Not Started
-🟨: = In Progress
-🟩: = Functionally Done
+🟥 = Not Started
+🟨 = In Progress
+🟩 = Functionally Done
 🟦 = Done & Pretty
 
 ## Anticipated Interfaces
@@ -27,7 +27,7 @@ INFSCI2710 eCommerce Project
      - PERFORMED THROUGH DJANGO ADMIN
 9. :yellow_square:**New User Registration Interface**
    - Conditional Logic for Home vs. Business
-10. :yellow_square::**Transaction Summary Interface**
+10. :yellow_square:**Transaction Summary Interface**
   - The system must provide data aggregation queries:
     - What are the aggregate sales and profit of the products.
       - Aggregation of the "Transaction" objects by Product?
