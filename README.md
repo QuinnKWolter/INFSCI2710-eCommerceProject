@@ -27,19 +27,17 @@ INFSCI2710 eCommerce Project
 9. :yellow_square:**New User Registration Interface**
    - Conditional Logic for Home vs. Business
 10. 🟨:**Transaction Summary Interface**
-   - For below info!!
-   - **Data Aggregation**
-     - The system must provide data aggregation queries:
-       - What are the aggregate sales and profit of the products.
-         - Aggregation of the "Transaction" objects by Product?
-       - What are the top product categories.
-         - Aggregation of "Transaction" objects by Category?
-       - How do the various regions compare by sales volume?
-         - Inventories..... something something?
-       - Which businesses are buying given products the most?
-         - All transactions where customer "Type" == "Business", sorted
-       - Other interesting aggregate queries that you will come up with.
-         - Will make up as we go
+  - The system must provide data aggregation queries:
+    - What are the aggregate sales and profit of the products.
+      - Aggregation of the "Transaction" objects by Product?
+    - What are the top product categories.
+      - Aggregation of "Transaction" objects by Category?
+    - How do the various regions compare by sales volume?
+      - Inventories..... something something?
+    - Which businesses are buying given products the most?
+      - All transactions where customer "Type" == "Business", sorted
+    - Other interesting aggregate queries that you will come up with.
+      - Will make up as we go
 
 ## ACTION ITEMS
 ### Kishor:
