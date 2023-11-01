@@ -91,6 +91,7 @@ def category_products(request, category_id):
 
 
 def cart(request):
+    ## add ability to edit amount in order.
     user = request.user
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
@@ -116,6 +117,7 @@ def delete_cart(request, cart_item_id):
     return HttpResponseRedirect("/cart")
 
 def product_page(request, product_id):
+    ## add check for if user already has item in cart and let them edit
     user = request.user
     if(user.is_authenticated):
         if request.method == "POST":
