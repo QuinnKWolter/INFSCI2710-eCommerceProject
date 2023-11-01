@@ -41,6 +41,7 @@ class login(TemplateView):
 
 
 def new_user(request):
+    ## disallow dupe emails and make the input fields only accept valid input
     if request.method == "POST":
         form = newUser(request.POST)
 
@@ -56,6 +57,7 @@ def new_user(request):
     return render(request, "new_user.html", {"form": form})
 
 def new_company(request):
+    ## disallow dupe emails and make the input fields only accept valid input
     if request.method == "POST":
         form = newCompany(request.POST)
         if form.is_valid():
@@ -92,6 +94,7 @@ def category_products(request, category_id):
 
 def cart(request):
     ## add ability to edit amount in order.
+    ## possible change this to transactions
     user = request.user
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)

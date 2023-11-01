@@ -60,6 +60,7 @@ class Customer(User):
     zip_code = models.CharField(max_length=10)
     kind = models.CharField(max_length=10, choices=[('Home', 'Home'), ('Business', 'Business')])
     # Fields for 'Home'
+    ## should probably change marital_status and gender to choices
     marital_status = models.CharField(max_length=10, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
