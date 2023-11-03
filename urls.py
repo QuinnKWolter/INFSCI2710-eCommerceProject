@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from app import views
 
 urlpatterns = [
@@ -68,4 +70,4 @@ urlpatterns = [
     path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin/users/', views.manage_users, name='manage_users'),
     path('admin/products/', views.manage_products, name='manage_products'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

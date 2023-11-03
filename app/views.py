@@ -80,24 +80,35 @@ def search(request):
     products = Product.objects.filter(name__icontains=query)
     return render(request, 'search_results.html', {'products': products})
 
-# Transaction and Cart
 def cart(request):
     # Assumes cart info is stored in session. Adjust as needed.
     cart = request.session.get('cart', {})
-    return render(request, 'cart.html', {'cart': cart})
+
+    # Fetch all products in the cart at once
+    product_ids = list(cart.keys())
+    products = Product.objects.filter(id__in=product_ids)
+
+    # Create a list of tuples (product, quantity) for the template
+    cart_items = [(product, cart[str(product.id)]) for product in products]
+
+    return render(request, 'cart.html', {'cart_items': cart_items})
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
     cart = request.session.get('cart', {})
-    cart[product_id] = cart.get(product_id, 0) + 1
+    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
     request.session['cart'] = cart
+    request.session.modified = True
     return redirect('cart')
 
 def remove_from_cart(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
     cart = request.session.get('cart', {})
-    if product_id in cart:
-        del cart[product_id]
+    product_id_str = str(product_id)
+    if product_id_str in cart:
+        del cart[product_id_str]
         request.session['cart'] = cart
+        request.session.modified = True
     return redirect('cart')
 
 def checkout(request):
