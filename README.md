@@ -63,6 +63,6 @@ INFSCI2710 eCommerce Project
 ### Quinn:
 1. :red_square:Merge Logan's frontend work + Run Kishor's scripts
 2. :yellow_square:Products and Category Products in a DataTable
-3. :red_square:Media resources
+3. :green_square:Media resources
 4. :yellow_square:Aggregation/Reporting dashboard
 5. :red_square:Writeups for the report on technical stack, testing procedures, etc.
