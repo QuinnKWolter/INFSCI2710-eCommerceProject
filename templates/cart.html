@@ -6,13 +6,11 @@
         <div class="col-md-12">
             <h1>Your Cart</h1>
             <ul class="list-group">
-                {% for product_id, quantity in cart.items %}
-                {% with product=Product.objects.get(pk=product_id) %}
+                {% for product, quantity in cart_items %}
                 <li class="list-group-item">
                     {{ product.name }} ({{ quantity }}) - ${{ product.price }}
                     <a href="{% url 'remove_from_cart' product.id %}">Remove</a>
                 </li>
-                {% endwith %}
                 {% empty %}
                 <li class="list-group-item">Your cart is empty.</li>
                 {% endfor %}
