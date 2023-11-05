@@ -55,6 +55,7 @@ class Region(models.Model):
 # Customer Model
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # user_id
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
     phone_number = models.CharField(max_length=15)
@@ -67,6 +68,7 @@ class Customer(models.Model):
     marital_status = models.CharField(max_length=10, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
+    # age is not good, we should try for dob instead
     # Fields for 'Business' kind users
     business_category = models.CharField(max_length=100, blank=True, null=True)
     annual_income = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)

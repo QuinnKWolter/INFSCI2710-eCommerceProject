@@ -33,11 +33,11 @@ Data Aggregation The system must provide data aggregation queries:
 	
 ## ACTION ITEMS
 ### Kishor: 
-1. Continue to work on Product and Category processing/population
-2. Script for Transactions
-3. Script for Reviews
-4. Script for Customers
-5. Inventories?
+[x] Continue to work on Product and Category processing/population
+[] Script for Transactions
+[] Script for Reviews
+[] Script for Customers
+[] Inventories?
 
 ### Rody
 1. Data/Script for Regions (3ish regions?)
