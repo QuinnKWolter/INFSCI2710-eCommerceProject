@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf import settings
+from django.conf.urls.static import static
 from app import views
 
 urlpatterns = [
+    path('ajax/', views.ajax),
     path('admin/', admin.site.urls),
     path('', views.index.as_view(), name='index'),
     path("accounts/", include("django.contrib.auth.urls")),
@@ -31,7 +33,12 @@ urlpatterns = [
     path("cart/", views.cart, name='cart'),
     path("empty_cart/", views.empty_cart, name='empty_cart'),
     path("delete_cart/<int:cart_item_id>", views.delete_cart, name='delete_cart'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('transaction/history/', views.transaction_history, name='transaction_history'),
 
-    # Ajax
-    path('ajax/', views.ajax)
-]
+    # Payment and Shipping
+    path('payment/', views.payment, name='payment'),
+    path('shipping/', views.shipping, name='shipping'),
+
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

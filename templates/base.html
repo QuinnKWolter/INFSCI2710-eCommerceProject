@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="INFSCI2470 Final Project, the 'Fair Recommender System' proposed by Dr. Yu-Ru Lin and Yongsu Ahn and implemented by Janet Dick, Jonilyn Dick, Taiwo Omileye, and Quinn K Wolter.">
+    <meta name="description" content="INFSCI2710 Final Project, an eCommerce platform implemented by Abhigyan Kishor, Logan Lee, Rody Kingston, and Quinn K Wolter.">
     <meta name="author" content="" />
     <link rel="icon" type="image/png" href="/static/img/favicon.png">
 
-    <title>{% block title %}INFSCI2710 - Ecommerce{% endblock %}</title>
+    <title>{% block title %}INFSCI2710 - eCommerce Platform{% endblock %}</title>
 
     <!-- JQuery UI CSS -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -22,7 +22,7 @@
     <!-- Selectize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.bootstrap5.min.css" integrity="sha512-Ars0BmSwpsUJnWMw+KoUKGKunT7+T8NGK0ORRKj+HT8naZzLSIQoOSIIM3oyaJljgLxFi0xImI5oZkAWEFARSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Base CSS -->
-    <link rel="stylesheet" href="{% static "css/base.css" %}">
+    <link rel="stylesheet" href="{% static " css /base.css" %}">
     {% block load_css %}
     {% endblock %}
 
@@ -40,7 +40,7 @@
     <!-- Selectize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js" integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Base JS -->
-    <script src="{% static "js/base.js" %}"></script>
+    <script src="{% static " js /base.js" %}"></script>
     {% block load_js %}
     {% endblock %}
 </head>
@@ -49,39 +49,60 @@
     <!-- Responsive navbar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Fair Recommender System</a>
+            <a class="navbar-brand" href="{% url 'index' %}">INFSCI2710 eCommerce Project</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
             <div class="navbar-collapse collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
+                    <!-- User Authentication Links -->
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="{% url 'index' %}">home</a>
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'product_list' %}">products</a>
+                        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'categories' %}">categories</a>
+                        <a class="nav-link" href="{% url 'transaction_history' %}">transactions</a>
                     </li>
+                    {%else%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    {%endif%}
+
+                    <!-- Product Browsing and Transaction Links -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+                    </li>
+
+                    <!-- Administrative Interface Links -->
+                    {% if request.user.is_staff %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            {#<li><a class="dropdown-item" href="{% url 'admin' %}">Admin Home</a></li>#}
+                            <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>
+                            <li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <!-- General Information Links -->
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="aboutBtn">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="helpBtn">Getting Started</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <p><a href="{% url 'logout' %}">Log Out</a></p>
-                    </li>
-                    <li class="nav-item">
-                        <p><a href="{% url 'cart' %}">Cart</a></p>
-                    </li>
-                    <li class="nav-item">
-                    {% else %}
-                        <li class="nav-item">
-                        <a href="{% url 'login' %}">Log In</a>
-                        </li>
-{% endif %}
                     </li>
                 </ul>
             </div>

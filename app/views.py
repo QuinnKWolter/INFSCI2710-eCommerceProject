@@ -11,7 +11,24 @@ from django.http import (
     HttpResponseServerError,
     JsonResponse
 )
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseServerError,
+    JsonResponse
+)
 from django.db.models import Q
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
+from django.db.models import Sum, Count
+from .forms import *
+from .models import Product, Transaction, TransactionItem, Salesperson, Store, Region
+from datetime import datetime
 
 # Create your views here.
 class index(TemplateView):
@@ -99,7 +116,10 @@ def cart(request):
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
         cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
-        return render(request, "cart.html", {"user":user, "cart_list":cart_list})
+        total = 0
+        for item in cart_list:
+            total = total + (item.quantity * item.product.price)
+        return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total})
     else:
         return login
 
@@ -119,22 +139,148 @@ def delete_cart(request, cart_item_id):
         cart_list.delete()
     return HttpResponseRedirect("/cart")
 
+
+
 def product_page(request, product_id):
     ## add check for if user already has item in cart and let them edit
     user = request.user
     if(user.is_authenticated):
+        customer = Customer.objects.get(id = user.id)
+        cart = CartItem.objects.filter(customer =customer.pk).filter(product = product_id)
+        default_quant = 1
+        if len(cart) > 0:
+            default_quant = cart[0].quantity
+            my_cart = cart[0]
         if request.method == "POST":
+            
             form = confirmAdd(request.POST )
             if form.is_valid():
+
+                    
                 temp_form = form.save(commit=False)
+                if len(cart) > 0:
+                    my_cart.quantity = temp_form.quantity
+                    my_cart.save()
+                    return HttpResponseRedirect("/")
                 temp_form.product = Product.objects.get(id = product_id)
-                temp_form.customer= Customer.objects.get(id = user.id)
+                temp_form.customer= customer
+                
                 temp_form.save()
                 return HttpResponseRedirect("/")
-        form = addCart(product=product_id,customer=user, initial={"quantity":1})
+        form = addCart(product=product_id,customer=user, initial={"quantity":default_quant})
         return render(request, "product_page.html", {"form": form, "product":Product.objects.get(id = product_id)})
     else:
         return render(request, "product_page.html", {"product":Product.objects.get(id = product_id)})
+
+
+def checkout(request):
+    # definitely need to add some safety checks
+    user = request.user
+    if(user.is_authenticated):
+        customer = Customer.objects.get(id = user.id)
+        checkout_cart = CartItem.objects.select_related("product").filter(customer = customer.pk)
+        print(len(checkout_cart))
+        if(len(checkout_cart)<= 0):
+            # should probably show an error message
+            return HttpResponseRedirect("/")
+        for item in checkout_cart:
+            if item.quantity > item.product.stock:
+                # again should probably lead to an error message
+                return HttpResponseRedirect("/")
+            
+        if request.method == 'POST':
+
+            form = CheckoutForm(request.POST)
+            if form.is_valid():
+                total = 0
+                for item in checkout_cart:
+                    total = total + (item.quantity * item.product.price)
+                new_transaction = Transaction(customer = customer, total_price = total)
+                new_transaction.save()
+                for item in checkout_cart:
+                    product = item.product
+                    new_trans_item = TransactionItem(transaction = new_transaction,date_ordered = datetime.utcnow, product = product, quantity = item.quantity)
+                    product.stock = product.stock - item.quantity
+                    product.save()
+                    new_trans_item.save()
+                CartItem.objects.filter(customer = customer.pk).delete()
+                return HttpResponseRedirect("/")
+        else:
+            form = CheckoutForm()
+        return render(request, 'checkout.html', {'form': form})
+    else:
+        return HttpResponseRedirect("/")
+
+def transaction_history(request):
+    customer = Customer.objects.get(id = request.user.id)
+    transactions = Transaction.objects.filter(customer=customer)
+    return render(request, 'transaction_history.html', {'transactions': transactions})
+
+    
+    
+@login_required
+def payment(request):
+    user = request.user
+    try:
+        transaction = Transaction.objects.get(customer__user=user, status='Pending')  # Assuming each user has one pending transaction at a time
+    except Transaction.DoesNotExist:
+        # Handle the case where no transaction exists
+        return redirect('cart')  # Redirect to cart if no pending transaction
+
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            card_number = form.cleaned_data['card_number']
+            expiration_date = form.cleaned_data['expiration_date']
+            cvv = form.cleaned_data['cvv']
+            # Assume a function process_payment which contacts a payment gateway and returns a boolean indicating success
+            # payment_success = process_payment(card_number, expiration_date, cvv, transaction.total_price)
+            payment_success = True
+            if payment_success:
+                transaction.status = 'Processing'  # Change to 'Processing' upon successful payment
+                transaction.save()
+                return redirect('checkout')  # Redirect to checkout on successful payment
+            else:
+                form.add_error(None, 'Payment processing failed. Please try again.')  # Add a non-field error to the form
+    else:
+        form = PaymentForm()
+
+    return render(request, 'payment.html', {'form': form})
+
+@login_required
+def shipping(request):
+    try:
+        # Assuming there's a transaction in progress for the logged-in user
+        transaction = Transaction.objects.filter(customer=request.user.customer, status='Pending').latest('date')
+    except Transaction.DoesNotExist:
+        # Handle the case where there is no transaction in progress
+        return redirect('cart')  # Or wherever you want to redirect
+
+    if request.method == 'POST':
+        form = ShippingForm(request.POST)
+        if form.is_valid():
+            # Save shipping information to the transaction
+            transaction.shipping_address = form.cleaned_data['shipping_address']
+            transaction.city = form.cleaned_data['city']
+            transaction.state = form.cleaned_data['state']
+            transaction.zip_code = form.cleaned_data['zip_code']
+            transaction.save()  # Save the updated transaction object
+
+            # Optionally update the order status
+            transaction.status = 'Processing'
+            transaction.save()
+
+            return redirect('checkout')
+    else:
+        # Pre-fill the form with existing shipping info if available
+        form = ShippingForm(initial={
+            'shipping_address': transaction.shipping_address,
+            'city': transaction.city,
+            'state': transaction.state,
+            'zip_code': transaction.zip_code,
+        })
+
+    return render(request, 'shipping.html', {'form': form})
 
 
 def ajax(request):

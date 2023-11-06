@@ -1,22 +1,23 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% block content %}
-    <h2>Products</h2>
-    <a href="{% url 'empty_cart' %}">empty cart</a>
-    <ul>
-        {% for product in cart_list %}
-        <li>
-            <a>
-                <img src= "product_images\"+{{product.product.image}} >
-            </a>
-                <a>
-                    
-                quantity {{product.quantity}}
-                </a>
-                <a>
-                {{product.product.name}} </a>
-                <a href="{% url 'delete_cart' product.id %}">delete</a>
-                
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Your Cart</h1>
+            <ul class="list-group">
+                {% for product in cart_list %}
+                <li class="list-group-item">
+                    {{ product.product.name }} ({{ product.quantity }}) - ${{ product.product.price }}
+                    <a href="{% url 'delete_cart' product.id %}">Remove</a>
                 </li>
-        {% endfor %}
-    </ul>
+                {% empty %}
+                <li class="list-group-item">Your cart is empty.</li>
+                {% endfor %}
+            </ul>
+            <a>{{total}}</a><br>
+            <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

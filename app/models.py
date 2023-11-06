@@ -72,7 +72,7 @@ class Customer(User):
         return self.name
 
 # Order Model
-class Order(models.Model):
+class Transaction(models.Model):
     STATUS_CHOICES = (
         ('Pending', 'Pending'),
         ('Processing', 'Processing'),
@@ -90,8 +90,8 @@ class Order(models.Model):
         return f'Order {self.id} - {self.status}'
 
 # OrderItem Model
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+class TransactionItem(models.Model):
+    transaction = models.ForeignKey(Transaction, related_name='transaction', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
