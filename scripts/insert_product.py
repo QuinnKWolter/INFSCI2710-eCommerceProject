@@ -5,7 +5,7 @@ electronics = pandas.read_csv('electronics.csv')
 
 for row in electronics.itertuples():
     prod = Product(
-        name = row.asin,
+        asin = row.asin,
         description = row.title,
         price = row.price,
         # stock = 10,
