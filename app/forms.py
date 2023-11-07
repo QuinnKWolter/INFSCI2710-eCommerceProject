@@ -90,6 +90,28 @@ class CheckoutForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    shipping_address = forms.CharField(
+        label = "Shipping Address",
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_city = forms.CharField(
+        label='Shipping City',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_state = forms.CharField(
+        label='Shipping State',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_zipcode = forms.CharField(
+        label='Shipping Zip Code',
+        max_length=10,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
 
 class PaymentForm(forms.Form):
     card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))

@@ -195,11 +195,17 @@ def checkout(request):
                 total = 0
                 for item in checkout_cart:
                     total = total + (item.quantity * item.product.price)
-                new_transaction = Transaction(customer = customer, total_price = total)
+                new_transaction = Transaction(customer = customer, total_price = total,
+                                              date_ordered = datetime.utcnow,
+                                                shipping_address = form.cleaned_data['shipping_address'] ,            
+                                                city = form.cleaned_data['shipping_city'],
+                                                state = form.cleaned_data['shipping_state'],
+                                                zipcode = form.cleaned_data['shipping_zipcode'])
                 new_transaction.save()
                 for item in checkout_cart:
                     product = item.product
-                    new_trans_item = TransactionItem(transaction = new_transaction,date_ordered = datetime.utcnow, product = product, quantity = item.quantity)
+                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity,
+ )
                     product.stock = product.stock - item.quantity
                     product.save()
                     new_trans_item.save()
@@ -233,6 +239,7 @@ def payment(request):
             card_number = form.cleaned_data['card_number']
             expiration_date = form.cleaned_data['expiration_date']
             cvv = form.cleaned_data['cvv']
+            
             # Assume a function process_payment which contacts a payment gateway and returns a boolean indicating success
             # payment_success = process_payment(card_number, expiration_date, cvv, transaction.total_price)
             payment_success = True

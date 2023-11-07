@@ -85,6 +85,10 @@ class Transaction(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    shipping_address = models.CharField(max_length=200)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zipcode = models.IntegerField()
 
     def __str__(self):
         return f'Order {self.id} - {self.status}'
