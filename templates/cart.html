@@ -5,10 +5,23 @@
     <div class="row">
         <div class="col-md-12">
             <h1>Your Cart</h1>
+            <a href="{% url 'empty_cart' %}">empty cart</a>
             <ul class="list-group">
                 {% for product in cart_list %}
                 <li class="list-group-item">
-                    {{ product.product.name }} ({{ product.quantity }}) - ${{ product.product.price }}
+                    {% if product.product.stock < product.quantity %}
+                        Warning the amount in car tis currently greater than our stock please lower the amount ordered or delete the object i should probably make this red
+                        <br>
+                    {% endif %}
+                    <a href="{% url 'product_page' product.product.pk%}">{{ product.product.name }}</a>
+                    quantity
+                    <form method="post">
+                    {% csrf_token %}
+                    <input type="number" id="quantity" name = "quantity" min = "1" max = {{product.product.stock}} value = {{ product.quantity }} />
+                    <input type = "hidden" id = "product_id" name = "product_id" value = {{product.id}} readonly/>
+                    <button type="submit">edit this item</button>
+                    </form>
+                    - ${{ product.product.price }} each - ${{product.subtotal}}
                     <a href="{% url 'delete_cart' product.id %}">Remove</a>
                 </li>
                 {% empty %}

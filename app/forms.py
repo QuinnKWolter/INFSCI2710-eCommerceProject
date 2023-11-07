@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
-
-
+from django.forms import HiddenInput
+from django.forms import formset_factory
 class newUser(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')
     kind = "Home"
@@ -24,14 +24,16 @@ class addCart(forms.ModelForm):
     class Meta:
         model = CartItem
         fields = ("quantity",)
-
-        
+    
 class confirmAdd(forms.ModelForm):
     class Meta:
         model = CartItem
         fields = ("quantity",)
 
-        
+class cartForm(forms.Form):
+    quantity = forms.IntegerField()
+    product_id = forms.IntegerField()
+
 class CheckoutForm(forms.Form):
     full_name = forms.CharField(
         label='Full Name',
@@ -111,6 +113,7 @@ class CheckoutForm(forms.Form):
         max_length=10,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+
 
 
 class PaymentForm(forms.Form):

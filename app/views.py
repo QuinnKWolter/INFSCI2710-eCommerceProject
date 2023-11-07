@@ -114,14 +114,25 @@ def cart(request):
     ## possible change this to transactions
     user = request.user
     if(user.is_authenticated):
+        
         customer = Customer.objects.get(id = user.id)
+        if request.method == "POST":
+            form = cartForm(request.POST)
+            if form.is_valid():
+
+                changed_item = CartItem.objects.get(pk = form.cleaned_data["product_id"])
+                changed_item.quantity = form.cleaned_data["quantity"]
+                changed_item.save()
         cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
         total = 0
         for item in cart_list:
+            item.subtotal  =(item.quantity * item.product.price)
             total = total + (item.quantity * item.product.price)
         return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total})
     else:
         return login
+
+
 
 def empty_cart(request):
     user = request.user
