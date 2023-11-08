@@ -1,44 +1,39 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Customer, Product, Review
+from .models import *
+from django.forms import HiddenInput, formset_factory
 
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(max_length=254, help_text='Required. Enter a valid email address.')
-    full_name = forms.CharField(max_length=200, required=True)
-    phone_number = forms.CharField(max_length=15, required=True)
-    street_address = forms.CharField(max_length=300, required=True)
-    city = forms.CharField(max_length=100, required=True)
-    state = forms.CharField(max_length=100, required=True)
-    zip_code = forms.CharField(max_length=10, required=True)
-    kind = forms.ChoiceField(choices=[('Home', 'Home'), ('Business', 'Business')], required=True)
-    marital_status = forms.CharField(max_length=10, required=False)
-    gender = forms.CharField(max_length=10, required=False)
-    age = forms.IntegerField(required=False)
-    business_category = forms.CharField(max_length=100, required=False)
-    annual_income = forms.DecimalField(max_digits=15, decimal_places=2, required=False)
-
+class newUser(UserCreationForm):
+    email = forms.EmailField(max_length=200, help_text='Required')
+    kind = "Home"
     class Meta:
-        model = User
-        fields = ('username', 'email', 'full_name', 'phone_number', 'street_address', 'city', 'state', 'zip_code', 'kind', 'marital_status', 'gender', 'age', 'business_category', 'annual_income', 'password1', 'password2')
+        model = Customer
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age", 'password1', 'password2')
+class newCompany(UserCreationForm):
+    email = forms.EmailField(max_length=200, help_text='Required')
+    class Meta:
+        model = Customer
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","business_category","annual_income", 'password1', 'password2')
+        
+class addCart(forms.ModelForm):
+    def __init__(self, product, customer, *args, **kwargs):
+        self.customer = customer
+        self.product = product
+        super(addCart,self).__init__(*args, **kwargs)
+        self.fields["quantity"] = forms.IntegerField(min_value=1,max_value=Product.objects.get(id = product).stock)
+    class Meta:
+        model = CartItem
+        fields = ("quantity",)
+    
+class confirmAdd(forms.ModelForm):
+    class Meta:
+        model = CartItem
+        fields = ("quantity",)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        kind = cleaned_data.get('kind')
-        if kind == 'Home':
-            if not cleaned_data.get('marital_status') or not cleaned_data.get('gender') or not cleaned_data.get('age'):
-                raise forms.ValidationError("All fields for Home customers must be filled out.")
-        elif kind == 'Business':
-            if not cleaned_data.get('business_category') or not cleaned_data.get('annual_income'):
-                raise forms.ValidationError("All fields for Business customers must be filled out.")
-        return cleaned_data
-
-class SearchForm(forms.Form):
-    q = forms.CharField(
-        label='Search',
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search products...'})
-    )
+class cartForm(forms.Form):
+    quantity = forms.IntegerField()
+    product_id = forms.IntegerField()
 
 class CheckoutForm(forms.Form):
     full_name = forms.CharField(
@@ -98,6 +93,28 @@ class CheckoutForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    shipping_address = forms.CharField(
+        label = "Shipping Address",
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_city = forms.CharField(
+        label='Shipping City',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_state = forms.CharField(
+        label='Shipping State',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    shipping_zipcode = forms.CharField(
+        label='Shipping Zip Code',
+        max_length=10,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
 
 class PaymentForm(forms.Form):
     card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -142,3 +159,10 @@ class ReviewForm(forms.ModelForm):
         if rating < 1 or rating > 5:
             raise forms.ValidationError("Rating must be between 1 and 5.")
         return rating
+
+class SearchForm(forms.Form):
+    q = forms.CharField(
+        label='Search',
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search products...'})
+    )

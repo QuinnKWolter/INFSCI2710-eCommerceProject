@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container mt-4">
+    <h2>{{ category_name }}</h2>
     <table id="productsTable" class="table table-striped" style="width:100%">
         <thead>
             <tr>
                 <th>Image</th>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Stock</th>
             </tr>
         </thead>
@@ -15,13 +15,11 @@
             {% for product in products_list %}
             <tr>
                 <td>
+                    <!-- Make sure to provide the correct path to your product images -->
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto;">
                 </td>
                 <td>
                     <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
-                </td>
-                <td>
-                    {{ product.description }}
                 </td>
                 <td>
                     {{ product.stock }}
@@ -33,12 +31,9 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#productsTable').DataTable({
-            'columnDefs': [
-                { 'orderable': false, 'targets': [0, 2] } // Disable sorting on the first and third columns
-            ]
-        });
-    });
+document.addEventListener("DOMContentLoaded", function(){
+    $('#productsTable').DataTable();
+});
 </script>
+
 {% endblock %}
