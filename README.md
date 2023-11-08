@@ -69,6 +69,7 @@ and foreign keys."
 4. :red_square:Create the widget for user reviews on a given Product detail page.
 5. :red_square:"REPORT: A list of assumptions that you have made about the system."
 6. :red_square:"REPORT: A description of your front-end design as well as the front-end to back-end connection."
+7. 🟥Search functionality.
 
 ### Quinn:
 1. :yellow_square:Merge Logan's frontend work + Run Kishor's scripts
