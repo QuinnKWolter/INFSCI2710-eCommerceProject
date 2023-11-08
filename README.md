@@ -75,7 +75,6 @@ and foreign keys."
 2. :green_square:Products and Category Products in a DataTable
 3. :green_square:Media resources
 4. :yellow_square:Aggregation/Reporting dashboard
-5. :red_square:Writeups for the report on technical stack, testing procedures, etc.
-6. 🟥"REPORT: A short overview of the system including identification of the various types of users, administrators, etc. who will be accessing the system in various ways."
-7. 🟥"REPORT: A description of your testing efforts and erroneous cases that your system can detect and handle."
-8. 🟥"REPORT: A description of the system's limitations and the possibilities for improvements."
+5. 🟥"REPORT: A short overview of the system including identification of the various types of users, administrators, etc. who will be accessing the system in various ways."
+6. 🟥"REPORT: A description of your testing efforts and erroneous cases that your system can detect and handle."
+7. 🟥"REPORT: A description of the system's limitations and the possibilities for improvements."
