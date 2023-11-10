@@ -1,73 +1,51 @@
-"""app URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from app import views
 
 urlpatterns = [
-    # Site Home
+    # Home and Account URLs
     path('', views.index, name='index'),
-    
-    # Ajax
-    path('ajax/', views.ajax),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', views.new_user, name='new_user'),
+    path('accounts/register_company/', views.new_company, name='new_company'),
 
-    # User Authentication
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-
-    # User Profile
-    path('profile/', views.profile, name='profile'),
-
-    # Product Browsing and Searching
+    # Product and Category URLs
     path('products/', views.product_list, name='product_list'),
-    path('products/<int:product_id>/', views.product_detail, name='product_detail'),
-    path('search/', views.search, name='search'),
+    path('products/<int:product_id>/', views.product_page, name='product_page'),
+    path('categories/', views.categories, name='categories'),
+    path('categories/<int:category_id>/', views.category_products, name='category_products'),
 
-    # Transaction and Cart
+    # Cart and Checkout URLs
     path('cart/', views.cart, name='cart'),
-    path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/empty/', views.empty_cart, name='empty_cart'),
+    path('cart/delete/<int:cart_item_id>/', views.delete_cart, name='delete_cart'),
     path('checkout/', views.checkout, name='checkout'),
-    path('transaction/history/', views.transaction_history, name='transaction_history'),
 
-    # Payment and Shipping
+    # Payment and Shipping URLs
     path('payment/', views.payment, name='payment'),
     path('shipping/', views.shipping, name='shipping'),
+    path('transaction/history/', views.transaction_history, name='transaction_history'),
 
-    # Salesperson Interface
+    # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),
 
-    # Store and Inventory Management
+    # Store and Inventory Management URLs
     path('inventory/', views.inventory, name='inventory'),
     path('inventory/update/<int:product_id>/', views.update_inventory, name='update_inventory'),
 
-    # Review
+    # Review URLs
     path('review/<int:product_id>/', views.review, name='review'),
 
-    # Data Aggregation and Reporting
+    # Data Aggregation and Reporting URLs
     path('reports/sales/', views.sales_report, name='sales_report'),
     path('reports/products/', views.product_report, name='product_report'),
     path('reports/regions/', views.region_report, name='region_report'),
 
-    # Administrative Interface
-    path('admin/', admin.site.urls, name='admin'),
-    path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('admin/users/', views.manage_users, name='manage_users'),
-    path('admin/products/', views.manage_products, name='manage_products'),
+    # Miscellaneous URLs
+    path('ajax/', views.ajax),
+
+    # Admin URL
+    path('admin/', admin.site.urls)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
