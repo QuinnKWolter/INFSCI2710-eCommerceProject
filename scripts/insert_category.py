@@ -5,7 +5,7 @@ electronics_categories = pandas.read_csv('electronics_categories.csv')
 
 for row in electronics_categories.itertuples():
     cat = Category(
-        unique_id = row.id,
+        # unique_id = row.id,
         name = row.category_name
     )
     cat.save()

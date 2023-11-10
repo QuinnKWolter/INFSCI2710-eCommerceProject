@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # Category Model
 class Category(models.Model):
     ## Augment and use pk instead
-    unique_id = models.IntegerField(null = True)
+    # unique_id = models.IntegerField(null = True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
 
@@ -22,7 +22,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.description
 
 # Salesperson Model
 class Salesperson(models.Model):
@@ -55,6 +55,7 @@ class Region(models.Model):
 
 # Customer Model
 class Customer(User):
+
     name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15)
     # phone number middle should be 555 
@@ -125,6 +126,10 @@ class Review(models.Model):
     customer = models.ForeignKey(Customer, related_name='reviews', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    reviewText = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'Review by {self.customer} for {self.product}'
 
 # CartItem Model
 class CartItem(models.Model):
@@ -132,5 +137,3 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
-    def __str__(self):
-        return f'Review by {self.customer} for {self.product}'

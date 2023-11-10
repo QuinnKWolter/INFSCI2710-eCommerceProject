@@ -8,20 +8,23 @@ import pandas
 from app.models import Customer
 from django.contrib.auth.models import User
 
-customers = pandas.read_csv('users.csv').drop_duplicates(subset = ['reviewerName'])
+customers = pandas.read_csv('users.csv')
 
 for i,row in enumerate(customers.itertuples()):
-    if i > 20:
-        break
-    user = User.objects.create_user(username = str(row.reviewerName).replace(' ', '_'),
-                                        email = row.EMAIL,
-                                        password = 'password')
+    # if i > 20:
+    #     break
+    # user = User.objects.create_user(username = str(row.reviewerName).replace(' ', '_'),
+                                        # email = row.EMAIL,
+                                        # password = 'password')
     cust = Customer(
-        user = user,
-        reviewer_id = row.reviewerID,
-        full_name = row.reviewerName,
+        # user = user,
+        # reviewer_id = row.reviewerID,
+        username = row.reviewerName,
+        name = row.reviewerName,
+        email = row.EMAIL,
+        password = 'password',
         phone_number = row.PHONE,
-        street_address = str(row.NUMBER) + row.STREET,
+        street_address = str(row.NUMBER) + str(row.STREET),
         city = row.CITY,
         state = row.STATE,
         zip_code = row.POSTCODE,

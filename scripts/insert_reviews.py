@@ -1,19 +1,20 @@
 import pandas 
-from app.models import Review, Category
+from app.models import Review, Customer, Product
 
 reviews = pandas.read_csv('reviews.csv')
 
 for i,row in enumerate(reviews.itertuples()):
     # if i > 10000:
     #     break
-    try:
-        cust = Customer.objects.get(reviewer_id = row.reviewerID)
-        Product.objects.get(asin = row.asin)
-    except:
-        continue
+
+    cust = Customer.objects.get(email = row.EMAIL)
+    prod = Product.objects.get(asin = row.asin)
+
     rev = Review(
         customer = cust,
         product = prod,
-        rating = int(row.rating)
+        rating = int(row.overall),
+        reviewText = row.reviewText
     )
     rev.save()
+    
