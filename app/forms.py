@@ -31,6 +31,16 @@ class confirmAdd(forms.ModelForm):
         model = CartItem
         fields = ("quantity",)
 
+class reviewForm(forms.ModelForm):
+    rating = forms.IntegerField(min_value=0,max_value=5,)
+    comment = forms.CharField(
+        required=False,
+        widget=forms.Textarea()
+    )
+    class Meta:
+        model = Review
+        fields = ("rating","comment",)
+
 class cartForm(forms.Form):
     quantity = forms.IntegerField()
     product_id = forms.IntegerField()
@@ -161,8 +171,36 @@ class ReviewForm(forms.ModelForm):
         return rating
 
 class SearchForm(forms.Form):
-    q = forms.CharField(
-        label='Search',
+    name = forms.CharField(
+        label='name',
         max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search products...'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search name'}),
+        required=False,
+        strip=False
     )
+    description = forms.CharField(
+        label='description',
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search description'}),
+        required=False,
+        strip=False
+    )
+    category = forms.ModelChoiceField(
+        label="categories",
+        queryset=Category.objects.all(),
+        required=False
+    )
+    min_rating = forms.DecimalField(
+        label = "min rating",
+        min_value= 0,
+        max_value= 5,
+        initial = 0,
+        required=False
+    )
+    available = forms.BooleanField(
+        label= "Include sold out",
+        required=False
+    )
+    
+    
+    

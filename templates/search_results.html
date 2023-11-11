@@ -1,20 +1,47 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Search Results for "{{ request.GET.q }}"</h1>
-            <ul class="list-group">
-                {% for product in products %}
-                <li class="list-group-item">
-                    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-                </li>
-                {% empty %}
-                <li class="list-group-item">No products found.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+<div class="container mt-4">
+    <h2>Search results</h2>
+    <table id="productsTable" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Stock</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products_list %}
+            <tr>
+                <td>
+                    <!-- Make sure to provide the correct path to your product images -->
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto;">
+                </td>
+                <td>
+                    <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
+                </td>
+                <td>
+                    {% if product.stock == 0 %}
+                    <p class="text-danger">Sold Out</p>
+                    {% else %}
+                    <p class="text-success">In Stock: {{ product.stock }}</p>
+                    {%endif%}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    $('#productsTable').DataTable();
+});
+</script>
+
 {% endblock %}

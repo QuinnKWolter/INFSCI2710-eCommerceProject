@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Avg
 # Category Model
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -21,6 +21,17 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def avg_rating(self):
+        ratings = Review.objects.filter(product = self)
+        if len(ratings) > 0:
+            avg = 0
+            for rating in ratings:
+                avg = avg + rating.rating
+            return avg / len(ratings)
+        else:
+            return 0
+        
 
 # Salesperson Model
 class Salesperson(models.Model):
@@ -121,6 +132,7 @@ class Review(models.Model):
     customer = models.ForeignKey(Customer, related_name='reviews', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.CharField(max_length=1000)
 
 # CartItem Model
 class CartItem(models.Model):

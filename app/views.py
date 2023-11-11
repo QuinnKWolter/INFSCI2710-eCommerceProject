@@ -74,10 +74,34 @@ def logout_view(request):
 def profile(request):
     return render(request, 'profile.html', {'user': request.user})
 
+# quick comment search and search results are new so dont delete them while you are merging are stuff Quinn
 def search(request):
-    query = request.GET.get('q')
-    products = Product.objects.filter(name__icontains=query)
-    return render(request, 'search_results.html', {'products': products})
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            min_rating = form.cleaned_data["min_rating"]
+            available = form.cleaned_data["available"]
+            products = Product.objects.all()
+            if name:
+                products = products.filter(name__icontains = name)
+            if description:
+                products = products.filter(description__icontains = description)
+            if category:
+                products = products.filter(category = category)
+            if min_rating > 0:
+                ids_above_rating = [product.id for product in products if product.avg_rating() >= min_rating]
+                products = products.filter(id__in = ids_above_rating)
+            if not available:
+                products = products.filter( stock__gt  = 0)
+            return render(request,'search_results.html', {'products_list': products} )
+            
+                
+    else:
+        form = SearchForm()
+    return render(request, 'search.html', {'form': form})
 
 def cart(request):
     # Assumes cart info is stored in session. Adjust as needed.
@@ -366,10 +390,13 @@ def cart(request):
                 changed_item.save()
         cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
         total = 0
+        flag = True
         for item in cart_list:
             item.subtotal  =(item.quantity * item.product.price)
             total = total + (item.quantity * item.product.price)
-        return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total})
+            if(item.quantity > item.product.stock):
+                flag = False
+        return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total, "flag":flag})
     else:
         return login
 
@@ -391,34 +418,54 @@ def delete_cart(request, cart_item_id):
 
 def product_page(request, product_id):
     ## add check for if user already has item in cart and let them edit
+   
     user = request.user
+    product = Product.objects.get(id = product_id)
+    review_list = Review.objects.filter(product= product)
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
         cart = CartItem.objects.filter(customer =customer.pk).filter(product = product_id)
         default_quant = 1
+        flag = False
         if len(cart) > 0:
             default_quant = cart[0].quantity
             my_cart = cart[0]
+            flag = True
         if request.method == "POST":
             
             form = confirmAdd(request.POST )
             if form.is_valid():
-
                     
                 temp_form = form.save(commit=False)
                 if len(cart) > 0:
                     my_cart.quantity = temp_form.quantity
                     my_cart.save()
                     return HttpResponseRedirect("/")
-                temp_form.product = Product.objects.get(id = product_id)
+                temp_form.product = product
                 temp_form.customer= customer
                 
                 temp_form.save()
                 return HttpResponseRedirect("/")
+            form = reviewForm(request.POST)
+            if form.is_valid():
+                temp_form = form.save(commit=False)
+                print (form.cleaned_data)
+                review= Review.objects.filter(customer =customer.pk).filter(product = product_id)
+                if len(review) > 0:
+                    my_review = review[0]
+                    my_review.rating = temp_form.rating
+                    my_review.comment = temp_form.comment
+                    my_review.save()
+                else:
+                    temp_form.product = product
+                    temp_form.customer = customer
+                    temp_form.save()
+                review_list = Review.objects.filter(product= product)
         form = addCart(product=product_id,customer=user, initial={"quantity":default_quant})
-        return render(request, "product_page.html", {"form": form, "product":Product.objects.get(id = product_id)})
+        review_form = reviewForm()
+        return render(request, "product_page.html", {"form": form, "review_form": review_form, "product":product, "flag":flag,"reviews":review_list})
     else:
-        return render(request, "product_page.html", {"product":Product.objects.get(id = product_id)})
+        return render(request, "product_page.html", {"product":product, "reviews":review_list})
 
 def checkout(request):
     # definitely need to add some safety checks

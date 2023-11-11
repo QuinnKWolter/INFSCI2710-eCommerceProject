@@ -35,7 +35,15 @@
             </div>
             <div class="mt-3">
                 <h3>Total: ${{ total }}</h3>
-                <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                {% if total == 0  %}
+                    <a href="{% url 'checkout' %}" class="btn btn-primary disabled" aria-disabled="true">Proceed to Checkout</a>
+                {% else %}
+                    {% if flag %}
+                        <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                    {% else %}
+                        <a href="{% url 'checkout' %}" class="btn btn-primary disabled" aria-disabled="true">Proceed to Checkout</a>
+                        {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>

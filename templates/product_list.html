@@ -9,6 +9,7 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Stock</th>
+                <th>Rating</th>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +26,9 @@
                 </td>
                 <td>
                     {{ product.stock }}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
                 </td>
             </tr>
             {% endfor %}

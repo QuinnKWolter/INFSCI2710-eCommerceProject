@@ -20,23 +20,66 @@
             <h2>{{ product.name }}</h2>
             <p>{{ product.description }}</p>
             <p>Price: ${{ product.price }}</p>
-            
+            <p>Average rating {{ product.avg_rating }}</p>
             <!-- Stock Information -->
             {% if product.stock == 0 %}
             <p class="text-danger">Sold Out</p>
             {% else %}
             <p class="text-success">In Stock: {{ product.stock }}</p>
+            <!-- Add to Cart Form -->
+                {% if user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    {% if flag %}
+                        <button type="submit" class="btn btn-primary">Update Cart</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    {% endif %}
+                </form>
+                {% endif %}
             {% endif %}
 
-            <!-- Add to Cart Form -->
-            {% if user.is_authenticated %}
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
-            </form>
-            {% endif %}
+
         </div>
+        
+        <h2>Reviews</h2>
+        {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            {{ review_form|crispy }}
+            <button type="submit" class="btn btn-primary">Leave Review</button>
+        </form>
+        {%endif%}
+        <table id="reviewtable" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Reviewer</th>
+                    <th>Comment</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>
+                        <!-- Make sure to provide the correct path to your product images -->
+                        {{review.customer.username}}
+                    </td>
+                    <td>
+                        {{ review.comment }}
+                    </td>
+                    <td>
+                        {{ review.rating }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
+
+
+
+
