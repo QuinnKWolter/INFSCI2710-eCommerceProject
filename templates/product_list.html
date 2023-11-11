@@ -15,10 +15,10 @@
             {% for product in products_list %}
             <tr>
                 <td>
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto;">
+                    <img src="{{ product.image.url }}" alt="{{ product.asin }}" class="img-thumbnail" style="width: 50px; height: auto;">
                 </td>
                 <td>
-                    <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
+                    <a href="{% url 'product_page' product.id %}">{{ product.asin }}</a>
                 </td>
                 <td>
                     {{ product.description }}
