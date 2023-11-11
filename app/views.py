@@ -387,7 +387,10 @@ def cart(request):
 
                 changed_item = CartItem.objects.get(pk = form.cleaned_data["product_id"])
                 changed_item.quantity = form.cleaned_data["quantity"]
-                changed_item.save()
+                if form.cleaned_data["quantity"] > 0:
+                    changed_item.save()
+                else:
+                    delete_cart(request,form.cleaned_data["product_id"])
         cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
         total = 0
         flag = True
@@ -497,8 +500,9 @@ def checkout(request):
                                                 zipcode = form.cleaned_data['shipping_zipcode'])
                 new_transaction.save()
                 for item in checkout_cart:
+                    price = (item.quantity * item.product.price)
                     product = item.product
-                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity,
+                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity, price = price
  )
                     product.stock = product.stock - item.quantity
                     product.save()

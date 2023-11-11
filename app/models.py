@@ -95,7 +95,7 @@ class Transaction(models.Model):
     # Linking to Customer and Salesperson models
     customer = models.ForeignKey(Customer, related_name='transactions', on_delete=models.CASCADE)
     salesperson = models.ForeignKey(Salesperson, related_name='transactions', on_delete=models.SET_NULL, null=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     shipping_address = models.CharField(max_length=200)
@@ -105,12 +105,19 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
+    def get_items(self):
+        items = TransactionItem.objects.filter(Transaction = self)
+        return_text = ""
+        for item in items:
+            return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' ' +item.price+ ','
+            
 
 # OrderItem Model
 class TransactionItem(models.Model):
     transaction = models.ForeignKey(Transaction, related_name='transaction', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    price = models.IntegerField()
 
     def __str__(self):
         return f'{self.product.name} ({self.quantity})'
@@ -120,6 +127,7 @@ class Inventory(models.Model):
     store = models.ForeignKey(Store, related_name='inventory_items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='inventory_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    
 
     class Meta:
         unique_together = ('store', 'product')  # Ensure that each product is unique per store

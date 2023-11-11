@@ -22,7 +22,7 @@
                     </div>
                     <form method="post" class="d-flex align-items-center">
                         {% csrf_token %}
-                        <input type="number" class="form-control me-2" id="quantity" name="quantity" min="1" max="{{ product.product.stock }}" value="{{ product.quantity }}" style="width: 80px;">
+                        <input type="number" class="form-control me-2" id="quantity" name="quantity" min="0" max="{{ product.product.stock }}" value="{{ product.quantity }}" style="width: 80px;">
                         <input type="hidden" id="product_id" name="product_id" value="{{ product.id }}">
                         <button type="submit" class="btn btn-info btn-sm me-2">Update</button>
                         <span class="badge bg-primary rounded-pill">$ {{ product.subtotal }}</span>
