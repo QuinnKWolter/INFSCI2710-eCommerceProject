@@ -201,6 +201,14 @@ class SearchForm(forms.Form):
         label= "Include sold out",
         required=False
     )
+    min_price =forms.DecimalField(
+        min_value=0,
+        required=False
+    )
+    max_price =forms.DecimalField(
+        min_value=0,
+        required=False
+    )
     
     
     

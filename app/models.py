@@ -31,33 +31,22 @@ class Product(models.Model):
             return avg / len(ratings)
         else:
             return 0
-        
-
-# Salesperson Model
-class Salesperson(models.Model):
-    name = models.CharField(max_length=200)
-    address = models.CharField(max_length=300)
-    email = models.EmailField()
-    job_title = models.CharField(max_length=100, choices=[('Manager', 'Manager'), ('Associate', 'Associate')])
-    store_assigned = models.ForeignKey('Store', related_name='salespersons', on_delete=models.SET_NULL, null=True)
-    salary = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return self.name
 
 # Store Model
 class Store(models.Model):
     address = models.CharField(max_length=300)
     manager = models.CharField(max_length=200)
-    region = models.ForeignKey('Region', related_name='stores', on_delete=models.SET_NULL, null=True)
+    region = models.ForeignKey('Region', related_name='stores', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.address
+    def employee_count(self):
+        return len(Salesperson.objects.filter(store_assigned = self))
 
 # Region Model
 class Region(models.Model):
     name = models.CharField(max_length=200)
-    region_manager = models.CharField(max_length=200)
+    region_manager = models.ForeignKey('Salesperson', related_name='manager', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -70,7 +59,7 @@ class Customer(User):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
-    kind = models.CharField(max_length=10, choices=[('Home', 'Home'), ('Business', 'Business')])
+    kind = models.CharField(max_length=10, choices=[('Home', 'Home'), ('Business', 'Business'),('Manager', 'Manager'), ('Associate', 'Associate')])
     # Fields for 'Home'
     ## should probably change marital_status and gender to choices
     marital_status = models.CharField(max_length=10, blank=True, null=True)
@@ -82,7 +71,17 @@ class Customer(User):
 
     def __str__(self):
         return self.name
+    def is_employee(self):
+        employee_type = ("Manager", "Associate")
+        return self.kind in employee_type
+    
+# Salesperson Model
+class Salesperson(Customer):
+    store_assigned = models.ForeignKey('Store', related_name='salespersons', on_delete=models.SET_NULL, null=True, blank=True)
+    salary = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def __str__(self):
+        return self.name
 # Transaction Model
 class Transaction(models.Model):
     STATUS_CHOICES = (
@@ -93,8 +92,8 @@ class Transaction(models.Model):
     )
     
     # Linking to Customer and Salesperson models
-    customer = models.ForeignKey(Customer, related_name='transactions', on_delete=models.CASCADE)
-    salesperson = models.ForeignKey(Salesperson, related_name='transactions', on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.CASCADE)
+    salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

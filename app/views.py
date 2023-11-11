@@ -2,6 +2,7 @@ import csv, json
 from .models import *
 from django.shortcuts import render
 import random
+from django.db import connection
 from .forms import *
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView
@@ -84,19 +85,41 @@ def search(request):
             category = form.cleaned_data["category"]
             min_rating = form.cleaned_data["min_rating"]
             available = form.cleaned_data["available"]
-            products = Product.objects.all()
-            if name:
-                products = products.filter(name__icontains = name)
-            if description:
-                products = products.filter(description__icontains = description)
+            min = form.cleaned_data["min_price"]
+            max = form.cleaned_data["max_price"]
+            # You may be wondering why i did this I bult a query string instead of just using django well the project requires sql and this is sql
+            #products = Product.objects.all()
+            query = "Select * from app_product Where name like '%%" + name + "%%' and description like '%%" + description + "%%'"
+            #if name:
+            #    products = products.filter(name__icontains = name)
+            #if description:
+            #    products = products.filter(description__icontains = description)
             if category:
-                products = products.filter(category = category)
-            if min_rating > 0:
-                ids_above_rating = [product.id for product in products if product.avg_rating() >= min_rating]
-                products = products.filter(id__in = ids_above_rating)
+                query = query + " and category_id = " + str(category.pk)
+                #products = products.filter(category = category)
+            products2 = Product.objects.raw(query)
+            if min_rating:
+                ids_above_rating = [product.id for product in products2 if product.avg_rating() >= min_rating]
+                if len(ids_above_rating) > 0:
+                    query = query + " and id in ("
+                    for id in ids_above_rating:
+                        query = query + str(id) + ","
+                    query = query[:len(query)-1]
+                    query = query +")"
+                else:
+                    query = query + "and FALSE"
+                #products = products.filter(id__in = ids_above_rating)
             if not available:
-                products = products.filter( stock__gt  = 0)
-            return render(request,'search_results.html', {'products_list': products} )
+                query = query + " and stock > 0 "
+                #products = products.filter( stock__gt  = 0)
+            if min:
+                query = query + " and price >= " + str(min)
+                #products = products.filter( price__gt  = min)
+            if max:
+                query = query + " and price <= " + str(max)
+                #products = products.filter( price__lt  = max)
+            products2 = Product.objects.raw(query)
+            return render(request,'search_results.html', {'products_list': products2} )
             
                 
     else:
