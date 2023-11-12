@@ -46,11 +46,6 @@ INFSCI2710 eCommerce Project
 2. :red_square:Figure out stock/inventories/support structure in models.py with Logan for reports?
 3. :red_square:[Generate Database Diagram/ERD with Django Extensions](https://www.linkedin.com/pulse/generate-database-diagramerd-django-extensions-automatically-srujan-s/)
 4. :red_square:Let Quinn know your thoughts on various aggregation logic needs (from above)
-5. :red_square:Renovate stylings and visualizations for the pages.
-6. 🟥"REPORT: A graphical schema of the database using the E-R diagram with a short description of
-each entity set, relationship set and their corresponding attributes."
-7. 🟥"REPORT: A set of relational schema resulting from the E-R diagram with identification of primary
-and foreign keys."
 
 ### Rody:
 1. :yellow_square:Data/Script for Regions, Stores, Salespersons
@@ -59,23 +54,15 @@ and foreign keys."
    - Share with us
 4. :red_square:Mock up a home page.
    - Just copy and paste your widget a few times with different images/titles/prices
-5. 🟥Get the application up and running locally, get your Contact/About page served properly. (urls.py, views.py, mimic our templates)
-6. 🟥Once models.py is finished and done, "REPORT: The DDL statements to create the relational schema in some appropriate Normal Form, with identification and justification of the Normal Form."
 
 ### Logan:
-1. :yellow_square:Checkout/Payment interfaces.
+1. :red_square:Checkout/Payment interfaces
 2. :red_square:Work on models.py with Kishor to finalize transactions, carts, customers, etc.
-3. :yellow_square:More logic for cart, increase quantity rather than having multiple entries. Logic for handling stock values being outdated, logic for redirects under different circumstances.
-4. :red_square:Create the widget for user reviews on a given Product detail page.
-5. :red_square:"REPORT: A list of assumptions that you have made about the system."
-6. :red_square:"REPORT: A description of your front-end design as well as the front-end to back-end connection."
-7. 🟥Search functionality.
+3. :red_square:More logic for cart, increase quantity rather than having multiple entries
 
 ### Quinn:
-1. :yellow_square:Merge Logan's frontend work + Run Kishor's scripts
-2. :green_square:Products and Category Products in a DataTable
+1. :red_square:Merge Logan's frontend work + Run Kishor's scripts
+2. :yellow_square:Products and Category Products in a DataTable
 3. :green_square:Media resources
 4. :yellow_square:Aggregation/Reporting dashboard
-5. 🟥"REPORT: A short overview of the system including identification of the various types of users, administrators, etc. who will be accessing the system in various ways."
-6. 🟥"REPORT: A description of your testing efforts and erroneous cases that your system can detect and handle."
-7. 🟥"REPORT: A description of the system's limitations and the possibilities for improvements."
+5. :red_square:Writeups for the report on technical stack, testing procedures, etc.

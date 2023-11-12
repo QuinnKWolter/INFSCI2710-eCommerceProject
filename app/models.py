@@ -36,6 +36,7 @@ class Salesperson(models.Model):
 
 # Store Model
 class Store(models.Model):
+    st_id = models.IntegerField(null = True, blank = True)
     address = models.CharField(max_length=300)
     manager = models.CharField(max_length=200)
     region = models.ForeignKey('Region', related_name='stores', on_delete=models.SET_NULL, null=True)
@@ -52,17 +53,16 @@ class Region(models.Model):
         return self.name
 
 # Customer Model
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=200)
-    email = models.EmailField()
+class Customer(User):
+    name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15)
     street_address = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=10)
     kind = models.CharField(max_length=10, choices=[('Home', 'Home'), ('Business', 'Business')])
-    # Fields for 'Home' kind users
+    # Fields for 'Home'
+    ## should probably change marital_status and gender to choices
     marital_status = models.CharField(max_length=10, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
@@ -71,7 +71,7 @@ class Customer(models.Model):
     annual_income = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return self.full_name
+        return self.name
 
 # Transaction Model
 class Transaction(models.Model):
@@ -87,15 +87,19 @@ class Transaction(models.Model):
     salesperson = models.ForeignKey(Salesperson, related_name='transactions', on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Sum of all TransactionItem prices
-    
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    shipping_address = models.CharField(max_length=200)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zipcode = models.IntegerField()
+
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
 
-# TransactionItem Model
+# OrderItem Model
 class TransactionItem(models.Model):
-    transaction = models.ForeignKey(Transaction, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='transaction_items', on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, related_name='transaction', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     def __str__(self):
@@ -118,6 +122,12 @@ class Review(models.Model):
     customer = models.ForeignKey(Customer, related_name='reviews', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+# CartItem Model
+class CartItem(models.Model):
+    customer = models.ForeignKey(Customer, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
 
     def __str__(self):
         return f'Review by {self.customer} for {self.product}'
