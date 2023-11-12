@@ -38,6 +38,7 @@ class Salesperson(models.Model):
 
 # Store Model
 class Store(models.Model):
+    st_id = models.IntegerField(null = True, blank = True)
     address = models.CharField(max_length=300)
     manager = models.CharField(max_length=200)
     region = models.ForeignKey('Region', related_name='stores', on_delete=models.SET_NULL, null=True)
@@ -55,7 +56,6 @@ class Region(models.Model):
 
 # Customer Model
 class Customer(User):
-
     name = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=15)
     # phone number middle should be 555 
@@ -127,6 +127,12 @@ class Review(models.Model):
     product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     reviewText = models.TextField(blank=True, null=True)
+
+# CartItem Model
+class CartItem(models.Model):
+    customer = models.ForeignKey(Customer, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
 
     def __str__(self):
         return f'Review by {self.customer} for {self.product}'
