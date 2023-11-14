@@ -6,6 +6,10 @@
         <thead>
             <tr>
                 <th>Order number</th>
+                {%if request.user.is_staff %}
+                    <th>customer</th>
+                    <th>customer id</th>
+                {%endif%}
                 <th>Date</th>
                 <th>Items</th>
                 <th>Cost</th>
@@ -18,7 +22,14 @@
                 <td>
                     {{transaction.id}}
                 </td>
-                
+                {%if request.user.is_staff %}
+                <td>
+                    {{transaction.customer.username}}
+                </td>
+                <td>
+                    {{transaction.customer.pk}}
+                </td>
+                {%endif%}
                 <td>
                     {{transaction.date_ordered}}
                 </td>

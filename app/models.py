@@ -104,11 +104,13 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
+    
     def get_items(self):
-        items = TransactionItem.objects.filter(Transaction = self)
+        items = TransactionItem.objects.filter(transaction = self)
         return_text = ""
         for item in items:
-            return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' ' +item.price+ ','
+            return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' $' +str(item.price)+ ','
+        return return_text
             
 
 # OrderItem Model
@@ -149,3 +151,5 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f'Review by {self.customer} for {self.product}'
+    def subtotal(self):
+        return self.product.price * self.quantity

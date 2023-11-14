@@ -167,9 +167,6 @@ def checkout(request):
         form = CheckoutForm()
     return render(request, 'checkout.html', {'form': form})
 
-def transaction_history(request):
-    transactions = Transaction.objects.filter(customer=request.user.customer)
-    return render(request, 'transaction_history.html', {'transactions': transactions})
 
 # Payment and Shipping
 @login_required
@@ -503,7 +500,9 @@ def checkout(request):
         if(len(checkout_cart)<= 0):
             # should probably show an error message
             return HttpResponseRedirect("/")
+        total = 0
         for item in checkout_cart:
+            total = total + item.product.price * item.quantity
             if item.quantity > item.product.stock:
                 # again should probably lead to an error message
                 return HttpResponseRedirect("/")
@@ -521,6 +520,10 @@ def checkout(request):
                                                 city = form.cleaned_data['shipping_city'],
                                                 state = form.cleaned_data['shipping_state'],
                                                 zipcode = form.cleaned_data['shipping_zipcode'])
+                salesperson = form.cleaned_data['assisting_salesperson_id']
+                if salesperson:
+                    if len(Salesperson.objects.filter(pk = salesperson)) > 0:
+                        new_transaction.salesperson = Salesperson.objects.get(pk = salesperson)
                 new_transaction.save()
                 for item in checkout_cart:
                     price = (item.quantity * item.product.price)
@@ -534,14 +537,22 @@ def checkout(request):
                 return HttpResponseRedirect("/")
         else:
             form = CheckoutForm()
-        return render(request, 'checkout.html', {'form': form})
+        return render(request, 'checkout.html', {'form': form, 'cart_list':checkout_cart, 'total':total})
     else:
         return HttpResponseRedirect("/")
 
 def transaction_history(request):
-    customer = Customer.objects.get(id = request.user.id)
-    transactions = Transaction.objects.filter(customer=customer)
-    return render(request, 'transaction_history.html', {'transactions': transactions})
+    
+    user = request.user
+    if(user.is_authenticated):
+        customer = Customer.objects.get(id = request.user.id)
+        if(customer.is_staff):
+            transactions = Transaction.objects.filter()
+        else:
+            transactions = Transaction.objects.filter(customer=customer)
+        return render(request, 'transaction_history.html', {'transactions': transactions})
+    else:
+        return redirect('login')
     
 @login_required
 def payment(request):
