@@ -11,7 +11,8 @@
                     <th>customer id</th>
                 {%endif%}
                 <th>Date</th>
-                <th>Items</th>
+                <th>Item name</th>
+                <th>seller</th>
                 <th>Cost</th>
                 <th>Status</th>
             </tr>
@@ -20,27 +21,39 @@
             {% for transaction in transactions %}
             <tr>
                 <td>
-                    {{transaction.id}}
+                    {{transaction.transaction.id}}
                 </td>
                 {%if request.user.is_staff %}
                 <td>
-                    {{transaction.customer.username}}
+                    <a href="{% url 'transaction_history_customer' transaction.transaction.customer.pk %}">{{transaction.transaction.customer.username}}</a>
+                    
                 </td>
                 <td>
-                    {{transaction.customer.pk}}
+                    {{transaction.transaction.customer.pk}}
                 </td>
                 {%endif%}
                 <td>
-                    {{transaction.date_ordered}}
+                    {{transaction.transaction.date_ordered}}
                 </td>
                 <td>
-                    {{transaction.get_items}}
+                    {%if transaction.product_gone %}
+                    {{transaction.product_name}}
+                    {%else%}
+                    <a href="{% url 'product_page' transaction.product.pk%}">{{transaction.product_name}}</a>
+                    {%endif%}
                 </td>
                 <td>
-                    ${{transaction.total_price}}
+                {%if transaction.product_gone %}
+                    N/A 
+                {%else%}
+                {{transaction.product.store.name}}
+                {%endif%}
                 </td>
                 <td>
-                    {{transaction.status}}
+                    ${{transaction.price}}
+                </td>
+                <td>
+                    {{transaction.transaction.status}}
                 </td>
             </tr>
             {% endfor %}

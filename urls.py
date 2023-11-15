@@ -31,6 +31,7 @@ urlpatterns = [
     path('payment/', views.payment, name='payment'),
     path('shipping/', views.shipping, name='shipping'),
     path('transaction/history/', views.transaction_history, name='transaction_history'),
+    path('transaction/history/<int:customer_id>/', views.transaction_history_customer, name='transaction_history_customer'),
 
     # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),

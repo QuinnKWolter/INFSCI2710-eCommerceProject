@@ -196,6 +196,11 @@ class SearchForm(forms.Form):
         queryset=Category.objects.all(),
         required=False
     )
+    seller = forms.ModelChoiceField(
+        label="seller",
+        queryset=Store.objects.all(),
+        required=False
+    )
     min_rating = forms.DecimalField(
         label = "min rating",
         min_value= 0,

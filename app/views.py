@@ -83,13 +83,14 @@ def search(request):
             name = form.cleaned_data["name"]
             description = form.cleaned_data["description"]
             category = form.cleaned_data["category"]
+            seller = form.cleaned_data["seller"]
             min_rating = form.cleaned_data["min_rating"]
             available = form.cleaned_data["available"]
             min = form.cleaned_data["min_price"]
             max = form.cleaned_data["max_price"]
             # You may be wondering why i did this I bult a query string instead of just using django well the project requires sql and this is sql
             #products = Product.objects.all()
-            query = "Select * from app_product Where name like '%%" + name + "%%' and description like '%%" + description + "%%'"
+            query = "Select * from app_product Where name like '%%" + name + "%%' and description like '%%" + description + "%%' and listed = True" 
             #if name:
             #    products = products.filter(name__icontains = name)
             #if description:
@@ -97,6 +98,8 @@ def search(request):
             if category:
                 query = query + " and category_id = " + str(category.pk)
                 #products = products.filter(category = category)
+            if seller:
+                query = query + " and store_id = " + str(seller.pk)
             products2 = Product.objects.raw(query)
             if min_rating:
                 ids_above_rating = [product.id for product in products2 if product.avg_rating() >= min_rating]
@@ -383,7 +386,7 @@ def new_company(request):
     return render(request, "new_user.html", {"form": form})
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(listed = True)
     return render(request, 'product_list.html', {'products_list': products})
     
 def categories(request):
@@ -392,6 +395,7 @@ def categories(request):
 
 def category_products(request, category_id):
     products = Product.objects.filter(category= category_id) 
+    products.filter(listed = True)
     category_name = Category.objects.get(id = category_id)
     return render(request, "category_product_list.html", {"category_name":category_name, "products_list":products})
 
@@ -526,9 +530,9 @@ def checkout(request):
                         new_transaction.salesperson = Salesperson.objects.get(pk = salesperson)
                 new_transaction.save()
                 for item in checkout_cart:
-                    price = (item.quantity * item.product.price)
+                    subtotal = (item.quantity * item.product.price)
                     product = item.product
-                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity, price = price
+                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity, price = subtotal, product_name = product.name
  )
                     product.stock = product.stock - item.quantity
                     product.save()
@@ -546,13 +550,48 @@ def transaction_history(request):
     user = request.user
     if(user.is_authenticated):
         customer = Customer.objects.get(id = request.user.id)
-        if(customer.is_staff):
-            transactions = Transaction.objects.filter()
+
+        if(user.is_staff):
+            transactions = TransactionItem.objects.filter()   
+        elif user.has_perm("app.region_manager"):
+            salesperson = Salesperson.objects.get(pk = customer.pk)
+            transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+ 
+        elif user.has_perm("app.associate"):
+
+            salesperson = Salesperson.objects.get(pk = customer.pk)
+            
+            transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
         else:
-            transactions = Transaction.objects.filter(customer=customer)
+            transactions = TransactionItem.objects.filter(transaction__customer=customer)
+        transactions = transactions.order_by('-pk')
         return render(request, 'transaction_history.html', {'transactions': transactions})
     else:
         return redirect('login')
+    
+def transaction_history_customer(request,customer_id):
+    
+    user = request.user
+    if(user.is_authenticated):
+        salesperson = Salesperson.objects.get(id = request.user.id)
+        flag = False
+        
+        if(user.is_staff):
+            transactions = TransactionItem.objects.filter()  
+            flag = True 
+        elif user.has_perm("app.region_manager"):
+            transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+            flag = True
+        elif user.has_perm("app.associate"):
+            transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
+            flag = True
+        if flag:
+            transactions = transactions.filter(customer__id = customer_id)
+            transactions = transactions.order_by('-pk')
+            return render(request, 'transaction_history.html', {'transactions': transactions})
+        else:
+             return redirect('login')
+    return redirect('login')
     
 @login_required
 def payment(request):
