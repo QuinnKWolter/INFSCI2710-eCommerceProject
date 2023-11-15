@@ -9,7 +9,7 @@ class newUser(UserCreationForm):
     kind = "Home"
     class Meta:
         model = Customer
-        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age", 'password1', 'password2')
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income", 'password1', 'password2')
 class newCompany(UserCreationForm):
     email = forms.EmailField(max_length=200, help_text='Required')
     class Meta:
@@ -17,19 +17,30 @@ class newCompany(UserCreationForm):
         fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","business_category","annual_income", 'password1', 'password2')
         
 class addCart(forms.ModelForm):
-    def __init__(self, product, customer, *args, **kwargs):
+    def __init__(self, inventory, customer, *args, **kwargs):
         self.customer = customer
-        self.product = product
+        self.inventory = inventory
         super(addCart,self).__init__(*args, **kwargs)
-        self.fields["quantity"] = forms.IntegerField(min_value=1,max_value=Product.objects.get(id = product).stock)
+        self.fields["quantity"] = forms.IntegerField(min_value=1,max_value=Inventory.objects.get(id = inventory).quantity)
     class Meta:
         model = CartItem
-        fields = ("quantity",)
+        fields = ("quantity","inventory")
+
     
 class confirmAdd(forms.ModelForm):
     class Meta:
         model = CartItem
-        fields = ("quantity",)
+        fields = ("quantity","inventory")
+
+class reviewForm(forms.ModelForm):
+    rating = forms.IntegerField(min_value=0,max_value=5,)
+    comment = forms.CharField(
+        required=False,
+        widget=forms.Textarea()
+    )
+    class Meta:
+        model = Review
+        fields = ("rating","comment",)
 
 class cartForm(forms.Form):
     quantity = forms.IntegerField()
@@ -114,6 +125,12 @@ class CheckoutForm(forms.Form):
         max_length=10,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    assisting_salesperson_id = forms.CharField(
+        label='Assisting salesperson id',
+        max_length=10,
+        required= False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
 
 class PaymentForm(forms.Form):
@@ -161,8 +178,49 @@ class ReviewForm(forms.ModelForm):
         return rating
 
 class SearchForm(forms.Form):
-    q = forms.CharField(
-        label='Search',
+    name = forms.CharField(
+        label='name',
         max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search products...'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search name'}),
+        required=False,
+        strip=False
     )
+    description = forms.CharField(
+        label='description',
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search description'}),
+        required=False,
+        strip=False
+    )
+    category = forms.ModelChoiceField(
+        label="categories",
+        queryset=Category.objects.all(),
+        required=False
+    )
+    seller = forms.ModelChoiceField(
+        label="seller",
+        queryset=Store.objects.all(),
+        required=False
+    )
+    min_rating = forms.DecimalField(
+        label = "min rating",
+        min_value= 0,
+        max_value= 5,
+        initial = 0,
+        required=False
+    )
+    available = forms.BooleanField(
+        label= "Include sold out",
+        required=False
+    )
+    min_price =forms.DecimalField(
+        min_value=0,
+        required=False
+    )
+    max_price =forms.DecimalField(
+        min_value=0,
+        required=False
+    )
+    
+    
+    

@@ -9,6 +9,7 @@
                 <th>Image</th>
                 <th>Name</th>
                 <th>Stock</th>
+                <th>Rating</th>
             </tr>
         </thead>
         <tbody>
@@ -16,13 +17,20 @@
             <tr>
                 <td>
                     <!-- Make sure to provide the correct path to your product images -->
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto;">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
                 </td>
                 <td>
                     <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
                 </td>
                 <td>
-                    {{ product.stock }}
+                    {{ product.total_stock }}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
                 </td>
             </tr>
             {% endfor %}

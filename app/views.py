@@ -2,6 +2,7 @@ import csv, json
 from .models import *
 from django.shortcuts import render
 import random
+from django.db import connection
 from .forms import *
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView
@@ -75,31 +76,69 @@ def logout_view(request):
 def profile(request):
     return render(request, 'profile.html', {'user': request.user})
 
+# quick comment search and search results are new so dont delete them while you are merging are stuff Quinn
 def search(request):
-    query = request.GET.get('q')
-    products = Product.objects.filter(name__icontains=query)
-    return render(request, 'search_results.html', {'products': products})
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            description = form.cleaned_data["description"]
+            category = form.cleaned_data["category"]
+            seller = form.cleaned_data["seller"]
+            min_rating = form.cleaned_data["min_rating"]
+            available = form.cleaned_data["available"]
+            min = form.cleaned_data["min_price"]
+            max = form.cleaned_data["max_price"]
+            # You may be wondering why i did this I bult a query string instead of just using django well the project requires sql and this is sql
+            #products = Product.objects.all()
+            query = "Select * from app_product Where name like '%%" + name + "%%' and description like '%%" + description + "%%' and listed = True" 
+            #if name:
+            #    products = products.filter(name__icontains = name)
+            #if description:
+            #    products = products.filter(description__icontains = description)
+            if category:
+                query = query + " and category_id = " + str(category.pk)
+                #products = products.filter(category = category)
+            if seller:
+                query = query + " and store_id = " + str(seller.pk)
+            products2 = Product.objects.raw(query)
+            if min_rating:
+                ids_above_rating = [product.id for product in products2 if product.avg_rating() >= min_rating]
+                if len(ids_above_rating) > 0:
+                    query = query + " and id in ("
+                    for id in ids_above_rating:
+                        query = query + str(id) + ","
+                    query = query[:len(query)-1]
+                    query = query +")"
+                else:
+                    query = query + " and FALSE "
+                #products = products.filter(id__in = ids_above_rating)
+            products2 = Product.objects.raw(query)
+            if not available:
+                ids_above_total_stock= [product.id for product in products2 if product.total_stock() > 0]
+                if len(ids_above_total_stock) > 0:
+                    query = query + " and id in ("
+                    for id in ids_above_total_stock:
+                        query = query + str(id) + ","
+                    query = query[:len(query)-1]
+                    query = query +")"
+                else:
+                    query = query + " and FALSE "
+                #products = products.filter( stock__gt  = 0)
+            if min:
+                query = query + " and price >= " + str(min)
+                #products = products.filter( price__gt  = min)
+            if max:
+                query = query + " and price <= " + str(max)
+                #products = products.filter( price__lt  = max)
+            products2 = Product.objects.raw(query)
+            return render(request,'search_results.html', {'products_list': products2} )
+            
+                
+    else:
+        form = SearchForm()
+    return render(request, 'search.html', {'form': form})
 
-def cart(request):
-    # Assumes cart info is stored in session. Adjust as needed.
-    cart = request.session.get('cart', {})
-
-    # Fetch all products in the cart at once
-    product_ids = list(cart.keys())
-    products = Product.objects.filter(id__in=product_ids)
-
-    # Create a list of tuples (product, quantity) for the template
-    cart_items = [(product, cart[str(product.id)]) for product in products]
-
-    return render(request, 'cart.html', {'cart_items': cart_items})
-
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    cart = request.session.get('cart', {})
-    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
-    request.session['cart'] = cart
-    request.session.modified = True
-    return redirect('cart')
 
 def remove_from_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -121,9 +160,6 @@ def checkout(request):
         form = CheckoutForm()
     return render(request, 'checkout.html', {'form': form})
 
-def transaction_history(request):
-    transactions = Transaction.objects.filter(customer=request.user.customer)
-    return render(request, 'transaction_history.html', {'transactions': transactions})
 
 # Payment and Shipping
 @login_required
@@ -340,7 +376,7 @@ def new_company(request):
     return render(request, "new_user.html", {"form": form})
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(listed = True)
     return render(request, 'product_list.html', {'products_list': products})
     
 def categories(request):
@@ -349,6 +385,7 @@ def categories(request):
 
 def category_products(request, category_id):
     products = Product.objects.filter(category= category_id) 
+    products.filter(listed = True)
     category_name = Category.objects.get(id = category_id)
     return render(request, "category_product_list.html", {"category_name":category_name, "products_list":products})
 
@@ -364,13 +401,19 @@ def cart(request):
 
                 changed_item = CartItem.objects.get(pk = form.cleaned_data["product_id"])
                 changed_item.quantity = form.cleaned_data["quantity"]
-                changed_item.save()
-        cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
+                if form.cleaned_data["quantity"] > 0:
+                    changed_item.save()
+                else:
+                    delete_cart(request,form.cleaned_data["product_id"])
+        cart_list = CartItem.objects.filter(customer = customer.pk)
         total = 0
+        flag = True
         for item in cart_list:
-            item.subtotal  =(item.quantity * item.product.price)
-            total = total + (item.quantity * item.product.price)
-        return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total})
+            item.subtotal  =(item.quantity * item.inventory.product.price)
+            total = total + (item.quantity * item.inventory.product.price)
+            if(item.quantity > item.inventory.quantity):
+                flag = False
+        return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total, "flag":flag})
     else:
         return login
 
@@ -392,47 +435,76 @@ def delete_cart(request, cart_item_id):
 
 def product_page(request, product_id):
     ## add check for if user already has item in cart and let them edit
+   
     user = request.user
+    product = Product.objects.get(id = product_id)
+    inventory_list = Inventory.objects.filter(product = product)
+    review_list = Review.objects.filter(product= product)
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
-        cart = CartItem.objects.filter(customer =customer.pk).filter(product = product_id)
+        inv_list = Inventory.objects.filter(product = product)
+        cart = CartItem.objects.filter(customer =customer.pk).filter(inventory__in = inv_list)
         default_quant = 1
+        flag = False
         if len(cart) > 0:
             default_quant = cart[0].quantity
             my_cart = cart[0]
+            flag = True
         if request.method == "POST":
             
             form = confirmAdd(request.POST )
             if form.is_valid():
-
                     
                 temp_form = form.save(commit=False)
                 if len(cart) > 0:
                     my_cart.quantity = temp_form.quantity
                     my_cart.save()
                     return HttpResponseRedirect("/")
-                temp_form.product = Product.objects.get(id = product_id)
                 temp_form.customer= customer
                 
                 temp_form.save()
                 return HttpResponseRedirect("/")
-        form = addCart(product=product_id,customer=user, initial={"quantity":default_quant})
-        return render(request, "product_page.html", {"form": form, "product":Product.objects.get(id = product_id)})
+            form = reviewForm(request.POST)
+            if form.is_valid():
+                temp_form = form.save(commit=False)
+                print (form.cleaned_data)
+                review= Review.objects.filter(customer =customer.pk).filter(product = product_id)
+                if len(review) > 0:
+                    my_review = review[0]
+                    my_review.rating = temp_form.rating
+                    my_review.comment = temp_form.comment
+                    my_review.save()
+                else:
+                    temp_form.product = product
+                    temp_form.customer = customer
+                    temp_form.save()
+                review_list = Review.objects.filter(product= product)
+        form_list = []
+        for inv in inventory_list:
+            new_form = addCart(inventory=inv.id,customer=user, initial={"quantity":default_quant})
+            new_form.fields['inventory'].initial = inv
+            field = new_form.fields['inventory']
+            field.widget = forms.HiddenInput()
+            form_list.append(new_form)
+            
+        review_form = reviewForm()
+        return render(request, "product_page.html", {"forms": form_list, "review_form": review_form, "product":product, "flag":flag,"reviews":review_list, "inventory":inventory_list})
     else:
-        return render(request, "product_page.html", {"product":Product.objects.get(id = product_id)})
+        return render(request, "product_page.html", {"product":product, "reviews":review_list})
 
 def checkout(request):
     # definitely need to add some safety checks
     user = request.user
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
-        checkout_cart = CartItem.objects.select_related("product").filter(customer = customer.pk)
-        print(len(checkout_cart))
+        checkout_cart = CartItem.objects.filter(customer = customer.pk)
         if(len(checkout_cart)<= 0):
             # should probably show an error message
             return HttpResponseRedirect("/")
+        total = 0
         for item in checkout_cart:
-            if item.quantity > item.product.stock:
+            total = total + item.inventory.product.price * item.quantity
+            if item.quantity > item.inventory.quantity:
                 # again should probably lead to an error message
                 return HttpResponseRedirect("/")
             
@@ -442,33 +514,81 @@ def checkout(request):
             if form.is_valid():
                 total = 0
                 for item in checkout_cart:
-                    total = total + (item.quantity * item.product.price)
+                    total = total + (item.quantity * item.inventory.product.price)
                 new_transaction = Transaction(customer = customer, total_price = total,
                                               date_ordered = datetime.utcnow,
                                                 shipping_address = form.cleaned_data['shipping_address'] ,            
                                                 city = form.cleaned_data['shipping_city'],
                                                 state = form.cleaned_data['shipping_state'],
                                                 zipcode = form.cleaned_data['shipping_zipcode'])
+                salesperson = form.cleaned_data['assisting_salesperson_id']
+                if salesperson:
+                    if len(Salesperson.objects.filter(pk = salesperson)) > 0:
+                        new_transaction.salesperson = Salesperson.objects.get(pk = salesperson)
                 new_transaction.save()
                 for item in checkout_cart:
-                    product = item.product
-                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity,
+                    subtotal = (item.quantity * item.inventory.product.price)
+                    inventory = item.inventory
+                    new_trans_item = TransactionItem(transaction = new_transaction, inventory = inventory, quantity = item.quantity, price = subtotal
  )
-                    product.stock = product.stock - item.quantity
-                    product.save()
+                    inventory.quantity = inventory.quantity - item.quantity
+                    inventory.save()
                     new_trans_item.save()
                 CartItem.objects.filter(customer = customer.pk).delete()
                 return HttpResponseRedirect("/")
         else:
             form = CheckoutForm()
-        return render(request, 'checkout.html', {'form': form})
+        return render(request, 'checkout.html', {'form': form, 'cart_list':checkout_cart, 'total':total})
     else:
         return HttpResponseRedirect("/")
 
 def transaction_history(request):
-    customer = Customer.objects.get(id = request.user.id)
-    transactions = Transaction.objects.filter(customer=customer)
-    return render(request, 'transaction_history.html', {'transactions': transactions})
+    
+    user = request.user
+    if(user.is_authenticated):
+        customer = Customer.objects.get(id = request.user.id)
+
+        if(user.is_staff):
+            transactions = TransactionItem.objects.filter()   
+        elif user.has_perm("app.region_manager"):
+            salesperson = Salesperson.objects.get(pk = customer.pk)
+            transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+ 
+        elif user.has_perm("app.associate"):
+
+            salesperson = Salesperson.objects.get(pk = customer.pk)
+            
+            transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
+        else:
+            transactions = TransactionItem.objects.filter(transaction__customer=customer)
+        transactions = transactions.order_by('-pk')
+        return render(request, 'transaction_history.html', {'transactions': transactions})
+    else:
+        return redirect('login')
+    
+def transaction_history_customer(request,customer_id):
+    
+    user = request.user
+    if(user.is_authenticated):
+        salesperson = Salesperson.objects.get(id = request.user.id)
+        flag = False
+        
+        if(user.is_staff):
+            transactions = TransactionItem.objects.filter()  
+            flag = True 
+        elif user.has_perm("app.region_manager"):
+            transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+            flag = True
+        elif user.has_perm("app.associate"):
+            transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
+            flag = True
+        if flag:
+            transactions = transactions.filter(customer__id = customer_id)
+            transactions = transactions.order_by('-pk')
+            return render(request, 'transaction_history.html', {'transactions': transactions})
+        else:
+             return redirect('login')
+    return redirect('login')
     
 @login_required
 def payment(request):

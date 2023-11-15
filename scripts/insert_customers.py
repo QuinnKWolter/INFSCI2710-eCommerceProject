@@ -16,10 +16,15 @@ for i,row in enumerate(customers.itertuples()):
     # user = User.objects.create_user(username = str(row.reviewerName).replace(' ', '_'),
                                         # email = row.EMAIL,
                                         # password = 'password')
+    custom = Customer.objects.filter(username = row.reviewerName)
+    if len(custom) > 0:
+        username = row.reviewerName + str(i)
+    else:
+        username =row.reviewerName
     cust = Customer(
         # user = user,
         # reviewer_id = row.reviewerID,
-        username = row.reviewerName,
+        username = username,
         name = row.reviewerName,
         email = row.EMAIL,
         password = 'password',

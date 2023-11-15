@@ -65,12 +65,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'transaction_history' %}">Transactions</a>
                     </li>
+
                     {%else%}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
                     </li>
                     {%endif%}
-
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'search' %}">Search</a>
+                    </li>
                     <!-- Administrative Interface Links -->
                     {% if request.user.is_staff %}
                     <li class="nav-item dropdown">
@@ -84,7 +88,31 @@
                         </ul>
                     </li>
                     {% endif %}
-
+                    {% if perms.app.associate %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            management
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            {% if request.user.is_staff %}
+                            {% endif %}
+                            {% if perms.app.region_manager %}
+                                {#<li><a class="dropdown-item" href="{% url 'add_store' %}">add store</a></li>#}
+                                {#<li><a class="dropdown-item" href="{% url 'add_manager' %}">add manager</a></li>#} 
+                                {#<li><a class="dropdown-item" href="{% url 'edit_managers' %}">edit manager</a></li>#}
+                                {#<li><a class="dropdown-item" href="{% url 'edit_stores' %}">edit stores</a></li>#}
+                            {% endif %}
+                            {% if perms.app.region_manager %}
+                            {#<li><a class="dropdown-item" href="{% url 'add_manager' %}">add associate</a></li>#} 
+                            {#<li><a class="dropdown-item" href="{% url 'edit_products' %}">edit products</a></li>#} 
+                            {#<li><a class="dropdown-item" href="{% url 'add_product' %}">add product</a></li>#} 
+                            {% endif %}
+                            {#<li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>#}
+                            {#<li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>#}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
                     <!-- General Information Links -->
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="aboutBtn">About</a>

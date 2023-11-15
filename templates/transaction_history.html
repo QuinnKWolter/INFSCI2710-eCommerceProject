@@ -1,25 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Transaction History</h1>
-            <ul class="list-group">
-                {% for transaction in transactions %}
-                    <li class="list-group-item">
-                        Transaction {{ transaction.id }} on {{ transaction.date }}
-                        <ul>
-                            {% for item in transaction.items.all %}
-                                <li>{{ item.product.name }} ({{ item.quantity }}) - ${{ item.product.price }}</li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No transactions found.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+<div class="container mt-4">
+    <table id="productsTable" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Order number</th>
+                {%if request.user.is_staff %}
+                    <th>customer</th>
+                    <th>customer id</th>
+                {%endif%}
+                <th>Date</th>
+                <th>Item name</th>
+                <th>store address</th>
+                <th>Total Cost</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>
+                    {{transaction.transaction.id}}
+                </td>
+                {%if request.user.is_staff %}
+                <td>
+                    <a href="{% url 'transaction_history_customer' transaction.transaction.customer.pk %}">{{transaction.transaction.customer.username}}</a>
+                    
+                </td>
+                <td>
+                    {{transaction.transaction.customer.pk}}
+                </td>
+                {%endif%}
+                <td>
+                    {{transaction.transaction.date_ordered}}
+                </td>
+                <td>
+
+                <a href="{% url 'product_page' transaction.inventory.product.pk %}">{{transaction.inventory.product.name}}</a>
+
+                </td>
+                <td>
+
+                {{transaction.inventory.store.address}}
+
+                </td>
+                <td>
+                    ${{transaction.price}}
+                </td>
+                <td>
+                    {{transaction.quantity}}
+                </td>
+                <td>
+                    {{transaction.transaction.status}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
