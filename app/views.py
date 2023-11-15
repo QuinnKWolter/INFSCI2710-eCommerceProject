@@ -31,13 +31,13 @@ from .models import Product, Transaction, TransactionItem, Salesperson, Store, R
 from .forms import *
 from datetime import datetime
 
-# Create your views here.
-class index(TemplateView):
-    template_name = "index.html"
-
 # Index View
 def index(request):
     return render(request, 'index.html')
+
+# Index View
+def about(request):
+    return render(request, 'about.html')
 
 # Registration View
 def register(request):

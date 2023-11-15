@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.contrib.auth.models import Permission
+
 # Category Model
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -20,7 +21,7 @@ class Product(models.Model):
     stock = models.IntegerField(default=10)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
-    store = models.ForeignKey("Store", related_name = 'product',on_delete=models.CASCADE)
+    store = models.ForeignKey("Store", related_name = 'product', on_delete=models.CASCADE)
     listed = models.BooleanField(default=True)
 
     def __str__(self):
@@ -45,6 +46,7 @@ class Store(models.Model):
 
     def __str__(self):
         return self.name
+
     def employee_count(self):
         return len(Salesperson.objects.filter(store_assigned = self))
 
@@ -80,11 +82,11 @@ class Customer(User):
 # Salesperson Model it only exists because its in the prompt and is completely unneccasary
 class Salesperson(Customer):
     store = models.ForeignKey('Store', related_name='salespersons', on_delete=models.SET_NULL, null=True, blank=True)
-    
     salary = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name
+
 # Transaction Model
 class Transaction(models.Model):
     STATUS_CHOICES = (
@@ -113,8 +115,7 @@ class Transaction(models.Model):
         return_text = ""
         for item in items:
             return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' $' +str(item.price)+ ','
-        return return_text
-            
+        return return_text     
 
 # OrderItem Model
 class TransactionItem(models.Model):
@@ -155,6 +156,6 @@ class CustomUserPermissions:
         # admins will have is_staff checked off and get all perms
        permissions = (("associate", "not quite sure what associates can do"), 
                       ("manager", "can change stock and list/delist products and delete them can also add associates"),
-                       ( "region_manager","can view regional data and do things for the region can add stores and managers"),
+                       ("region_manager","can view regional data and do things for the region can add stores and managers"),
                        )
     
