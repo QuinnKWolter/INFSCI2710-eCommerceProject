@@ -32,10 +32,10 @@
                     {{ product.description }}
                 </td>
                 <td>
-                    {% if product.stock == 0 %}
+                    {% if product.total_stock == 0 %}
                     <p class="text-danger">Sold Out</p>
                     {% else %}
-                    <p class="text-success">In Stock: {{ product.stock }}</p>
+                    <p class="text-success">In Stock: {{ product.total_stock }}</p>
                     {%endif%}
                 </td>
                 <td>

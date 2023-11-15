@@ -12,8 +12,9 @@
                 {%endif%}
                 <th>Date</th>
                 <th>Item name</th>
-                <th>seller</th>
-                <th>Cost</th>
+                <th>store address</th>
+                <th>Total Cost</th>
+                <th>Amount</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -36,21 +37,20 @@
                     {{transaction.transaction.date_ordered}}
                 </td>
                 <td>
-                    {%if transaction.product_gone %}
-                    {{transaction.product_name}}
-                    {%else%}
-                    <a href="{% url 'product_page' transaction.product.pk%}">{{transaction.product_name}}</a>
-                    {%endif%}
+
+                <a href="{% url 'product_page' transaction.inventory.product.pk %}">{{transaction.inventory.product.name}}</a>
+
                 </td>
                 <td>
-                {%if transaction.product_gone %}
-                    N/A 
-                {%else%}
-                {{transaction.product.store.name}}
-                {%endif%}
+
+                {{transaction.inventory.store.address}}
+
                 </td>
                 <td>
                     ${{transaction.price}}
+                </td>
+                <td>
+                    {{transaction.quantity}}
                 </td>
                 <td>
                     {{transaction.transaction.status}}

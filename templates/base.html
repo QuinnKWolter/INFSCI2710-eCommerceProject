@@ -82,7 +82,7 @@
                             Admin
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                            {<li><a class="dropdown-item" href="{% url 'admin' %}">Admin Home</a></li>}
+                            {#<li><a class="dropdown-item" href="{% url 'admin' %}">Admin Home</a></li>#}
                             {#<li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>#}
                             {#<li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>#}
                         </ul>
@@ -95,7 +95,6 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                             {% if request.user.is_staff %}
-                                {<li><a class="dropdown-item" href="{% url 'admin' %}">Admin Home</a></li>}
                             {% endif %}
                             {% if perms.app.region_manager %}
                                 {#<li><a class="dropdown-item" href="{% url 'add_store' %}">add store</a></li>#}
