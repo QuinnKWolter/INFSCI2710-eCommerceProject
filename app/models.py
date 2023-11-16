@@ -1,7 +1,8 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Avg
+
+from django.db.models import Avg, Count, Min, Sum
 from django.contrib.auth.models import Permission
 # Category Model
 class Category(models.Model):
@@ -10,6 +11,12 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    def profit(self):
+        profit = 0
+        products = Product.objects.filter(category = self)
+        for product in products:
+            profit = profit + product.total_profit()
+        return round(profit,2)
 
 # Product Model
 # quick note for aggregation 
@@ -39,6 +46,28 @@ class Product(models.Model):
         for item in items:
             stock = stock + item.quantity
         return stock
+    def total_sold(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(inventory__product = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("quantity"))
+            total = w["total"]
+        return total
+    def total_profit(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(inventory__product = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("price"))
+            total = w["total"]
+        return round(total,2)
+    def product_purchases(self, product):
+        transactions = TransactionItem.objects.filter(inventory__product = self).filter(transaction__customer = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("quantity"))
+            total = w["total"]
+        return total
+        
+        
 # inventory model
 class Inventory(models.Model):
     store = models.ForeignKey("Store", related_name='inventory_items', on_delete=models.CASCADE)
@@ -61,6 +90,21 @@ class Store(models.Model):
         return self.address
     def employee_count(self):
         return len(Salesperson.objects.filter(store_assigned = self))
+    def profit(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(inventory__store = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("price"))
+            total = w["total"]
+        return round(total,2)
+    def sales_volume(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(inventory__store = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("quantity"))
+            total = w["total"]
+        return total
+
 
 # Region Model
 class Region(models.Model):
@@ -69,6 +113,19 @@ class Region(models.Model):
 
     def __str__(self):
         return self.name
+    def profit(self):
+        total = 0
+        stores = Store.objects.filter(region = self)
+        for store in stores:
+            total = total + store.profit()
+        return round(total,2)
+    def sales_volume(self):
+        total = 0
+        stores = Store.objects.filter(region = self)
+        for store in stores:
+            total = total + store.sales_volume()
+        return total
+    
 
 # Customer Model
 class Customer(User):

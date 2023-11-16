@@ -288,24 +288,6 @@ def review(request, product_id):
 def admin_check(user):
     return user.is_staff
 
-# Data Aggregation and Reporting
-@login_required
-@user_passes_test(admin_check)
-def sales_report(request):
-    total_sales = Transaction.objects.aggregate(Sum('total_price'))['total_price__sum']
-    return render(request, 'report_sales.html', {'total_sales': total_sales})
-
-@login_required
-@user_passes_test(admin_check)
-def product_report(request):
-    product_sales = Product.objects.annotate(sold=Sum('transaction_items__quantity'))
-    return render(request, 'report_product.html', {'product_sales': product_sales})
-
-@login_required
-@user_passes_test(admin_check)
-def region_report(request):
-    region_sales = Region.objects.annotate(sales=Sum('stores__salespersons__transactions__total_price'))
-    return render(request, 'report_region.html', {'region_sales': region_sales})
 
 # Administrative Interface
 @login_required
@@ -654,6 +636,37 @@ def shipping(request):
         })
 
     return render(request, 'shipping.html', {'form': form})
+
+
+# Aggregations and stuff
+def sales_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        products = Product.objects.all()
+        
+        return render(request, 'report_sales.html', {'products':products})
+
+def category_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        categories = Category.objects.all()
+        return render(request, 'category_report.html', {'categories':categories})
+def region_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        regions = Region.objects.all()
+        return render(request, 'report_region.html', {'regions':regions})
+    
+def business_product_report(request, product_id):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        product = Product.objects.get(pk = product_id)
+        businesses = Customer.objects.filter(kind="Business")
+        anno_businesses = businesses.annotate(amount_purchased = Sum("customer_transactions__transaction__quantity"), filter = Q(customer_transactions__transaction__inventory__product__id = product_id))
+        return render(request, 'report_business_product.html', {'businesses':anno_businesses, "product":product})
+        
+        
+    
 
 # Helper objects and functions for AJAX functionality
 switch = {

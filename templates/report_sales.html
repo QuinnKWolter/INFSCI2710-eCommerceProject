@@ -1,8 +1,61 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>Sales Report</h1>
-    <p>Total Sales: ${{ total_sales }}</p>
+<div class="container mt-4">
+    <h1>Category Sales Report</h1>
+    <table id="productsTable" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Stock</th>
+                <th>Rating</th>
+                <th>Total Sold</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
+                </td>
+                <td>
+                    {{ product.description }}
+                </td>
+                <td>
+                    {{ product.total_stock }}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
+                </td>
+                <td>
+                    {{ product.total_sold }}
+                </td>
+                <td>
+                    {{ product.total_profit }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#productsTable').DataTable({
+            'columnDefs': [
+                { 'orderable': false, 'targets': [0, 2] } // Disable sorting on the first and third columns
+            ]
+        });
+    });
+</script>
 {% endblock %}
