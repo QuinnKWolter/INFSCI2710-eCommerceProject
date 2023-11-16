@@ -5,8 +5,6 @@ from django.db.models import Avg
 from django.contrib.auth.models import Permission
 # Category Model
 class Category(models.Model):
-    ## Augment and use pk instead
-    # unique_id = models.IntegerField(null = True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
 
@@ -16,7 +14,7 @@ class Category(models.Model):
 # Product Model
 # quick note for aggregation 
 class Product(models.Model):
-    asin = models.CharField(max_length=10, null=True, blank=True)
+    name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
@@ -55,7 +53,6 @@ class Inventory(models.Model):
 
 # Store Model
 class Store(models.Model):
-    st_id = models.IntegerField(null = True, blank = True)
     address = models.CharField(max_length=300)
     manager = models.ForeignKey("Salesperson", related_name="store_manager", on_delete=models.SET_NULL, null = True, blank = True)
     region = models.ForeignKey('Region', related_name='stores', on_delete=models.SET_NULL, null=True, blank=True)

@@ -1,6 +1,6 @@
 import requests
 import pandas 
-from app.models import Product
+
 
 electronics = pandas.read_csv('electronics.csv')
 
