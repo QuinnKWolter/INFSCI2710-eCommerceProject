@@ -12,3 +12,5 @@ python manage.py shell < scripts/insert_product.py
 echo "completed product_script"
 python manage.py shell < scripts/insert_inventory.py
 echo "completed inventory_script"
+python scripts/insert_product_images.py
+echo "completed product_images_script"
