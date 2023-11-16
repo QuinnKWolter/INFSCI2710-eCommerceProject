@@ -77,7 +77,7 @@ class Customer(User):
     street_address = models.CharField(max_length=300, blank = True, null= True)
     city = models.CharField(max_length=100, blank = True, null= True)
     state = models.CharField(max_length=100,  blank = True, null= True)
-    zip_code = models.CharField(max_length=10, blank = True, null= True)
+    zip_code = models.CharField(max_length=10, blank = True, null= True, default = '12345')
     kind = models.CharField(max_length=20, choices=[('Home', 'Home'), ('Business', 'Business'),('Manager', 'Manager'),('Region_Manager', 'Region_Manager'), ('Associate', 'Associate'), ('Admin', 'Admin')])
     # Fields for 'Home'
     ## should probably change marital_status and gender to choices
@@ -120,13 +120,13 @@ class Transaction(models.Model):
     # Linking to Customer and Salesperson models
     customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.CASCADE)
     salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True)
-    date_ordered = models.DateTimeField(auto_now_add=True)
+    date_ordered = models.DateTimeField(auto_now_add=False)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     shipping_address = models.CharField(max_length=200)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    zipcode = models.IntegerField()
+    zipcode = models.CharField(max_length = 10, null = True, blank = True, default = '12345')
 
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
