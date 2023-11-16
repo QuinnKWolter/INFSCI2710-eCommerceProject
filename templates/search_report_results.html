@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search results</h2>
+    <table id="productsTable" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products_list %}
+            <tr>
+                <td>
+                    <!-- Make sure to provide the correct path to your product images -->
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'business_product_report' product.id %}">{{ product.name }}</a>
+                </td>
+                <td>
+                    {{ product.description }}
+                </td>
+                <td>
+                    {% if product.total_stock == 0 %}
+                    <p class="text-danger">Sold Out</p>
+                    {% else %}
+                    <p class="text-success">In Stock: {{ product.total_stock }}</p>
+                    {%endif%}
+                </td>
+                <td>
+                    ${{ product.price }}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    $('#productsTable').DataTable();
+});
+</script>
+
+{% endblock %}
