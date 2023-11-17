@@ -7,7 +7,7 @@
 import pandas
 from app.models import Customer
 from django.contrib.auth.models import User
-
+from django.contrib.auth.hashers import make_password
 customers = pandas.read_csv('users.csv')
 
 for i,row in enumerate(customers.itertuples()):
@@ -27,7 +27,7 @@ for i,row in enumerate(customers.itertuples()):
         username = username,
         name = row.reviewerName,
         email = row.EMAIL,
-        password = 'password',
+        password = make_password("a_strong_password",  hasher='default'),
         phone_number = row.PHONE,
         street_address = str(row.NUMBER) + str(row.STREET),
         city = row.CITY,

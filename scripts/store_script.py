@@ -40,6 +40,11 @@ def import_csvdata(filepath):
                 region =Region.objects.get(name = row[4]))
             
             sto.save()
+            manager.store = sto
+            manager.save()
+            
+
+
            
 #if __name__ == '__main__':
 

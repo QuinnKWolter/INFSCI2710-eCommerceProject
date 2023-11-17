@@ -2,8 +2,11 @@ from app.models import *
 import random
 import pandas
 import datetime
+from django.contrib.auth.models import Permission
+from django.db.models import Q
 
-salespersons = Salesperson.objects.all() #salesperson
+perm = Permission.objects.get(codename='region_manager')
+salespersons = Salesperson.objects.filter(~Q(user_permissions = perm)) #salesperson
 reviews = Review.objects.all() #review
 reviews_data = pandas.read_csv('reviews.csv')
 
@@ -28,3 +31,13 @@ for review in reviews:
         zipcode = cust.zip_code
     )
     transaction.save()
+    # print(transaction.salesperson.store)
+    # print(prod)
+
+    transaction_item = TransactionItem(
+        transaction = transaction,
+        inventory = Inventory.objects.get(store = transaction.salesperson.store, product = prod),
+        quantity = 1,
+        price = prod.price
+    )
+    transaction_item.save()
