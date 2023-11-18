@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+
+{% block load_css %}
+<!-- Add any specific CSS links for About page here if needed -->
+{% endblock %}
+
+{% block load_js %}
+<!-- Add any specific JavaScript links for About page here if needed -->
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4">About Us</h2>
+            <div class="about-page">
+                <h3>Company Mission:</h3>
+                <p>Your best stop for quality goods</p>
+                <p>Here at Company X, we provide high-grade products at affordable costs to add value to your lives. 
+                We are dedicated to customer satisfaction by offering a wide range of well-designed, functional 
+                electronics. These essential items help our customers achieve their aspirations inspiring the builders of tomorrow.</p>
+            </div>
+
+            <div class="contact">
+                <h2>Employees:</h2>
+
+                <h3>Sales Manager</h3>
+                <h4>Charles Rossum</h4>
+                <p>About me: Started as a sales rep and worked my way up to Manager.</p>
+                <p>Number: 412-456-8769</p>
+                <p>E-mail: <a href="mailto:Rossum@X.com">Rossum@X.com</a></p>
+                <button class="btn btn-primary">Contact</button><br><br>
+
+                <h3>Advertising Manager</h3>
+                <h4>Brendan Gosling</h4>
+                <p>About me: Transferred from Amazon to head the Advertising department.</p>
+                <p>Number: 412-253-9302</p>
+                <p>E-mail: <a href="mailto:Gosling@X.com">Gosling@X.com</a></p>
+                <button class="btn btn-primary">Contact</button><br><br>
+
+                <h3>Risk Manager</h3>
+                <h4>Tim Lie</h4>
+                <p>About me: Mitigates company budgeting.</p>
+                <p>Number: 412-267-1754</p>
+                <p>E-mail: <a href="mailto:Lie@X.com">Lie@X.com</a></p>
+                <button class="btn btn-primary">Contact</button><br><br>
+
+                <h3>Hours</h3>
+                <h4>Monday-Friday: 9:00am - 5:00pm</h4>
+                <p>Front Desk Number: 412-753-2651</p>
+                <p>E-mail: <a href="mailto:Front_desk@X.com">Front_desk@X.com</a></p>
+                <button class="btn btn-primary">Call</button><br><br>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

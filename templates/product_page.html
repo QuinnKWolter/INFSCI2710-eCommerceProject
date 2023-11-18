@@ -21,12 +21,14 @@
             <p>{{ product.description }}</p>
             <p>Price: ${{ product.price }}</p>
             <p>Average rating {{ product.avg_rating }}</p>
+            <p>store at {{ product.store.address}}</p>
             <!-- Stock Information -->
-            {% if product.stock == 0 %}
+            {% if product.total_stock == 0 %}
             <p class="text-danger">Sold Out</p>
             {% else %}
-            <p class="text-success">In Stock: {{ product.stock }}</p>
+            <p class="text-success">In Stock: {{ product.total_stock }}</p>
             <!-- Add to Cart Form -->
+            {% for form in forms %}
                 {% if user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
@@ -38,6 +40,7 @@
                     {% endif %}
                 </form>
                 {% endif %}
+            {% endfor %}
             {% endif %}
 
 

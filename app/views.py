@@ -110,10 +110,19 @@ def search(request):
                     query = query[:len(query)-1]
                     query = query +")"
                 else:
-                    query = query + "and FALSE"
+                    query = query + " and FALSE "
                 #products = products.filter(id__in = ids_above_rating)
+            products2 = Product.objects.raw(query)
             if not available:
-                query = query + " and stock > 0 "
+                ids_above_total_stock= [product.id for product in products2 if product.total_stock() > 0]
+                if len(ids_above_total_stock) > 0:
+                    query = query + " and id in ("
+                    for id in ids_above_total_stock:
+                        query = query + str(id) + ","
+                    query = query[:len(query)-1]
+                    query = query +")"
+                else:
+                    query = query + " and FALSE "
                 #products = products.filter( stock__gt  = 0)
             if min:
                 query = query + " and price >= " + str(min)
@@ -129,26 +138,6 @@ def search(request):
         form = SearchForm()
     return render(request, 'search.html', {'form': form})
 
-def cart(request):
-    # Assumes cart info is stored in session. Adjust as needed.
-    cart = request.session.get('cart', {})
-
-    # Fetch all products in the cart at once
-    product_ids = list(cart.keys())
-    products = Product.objects.filter(id__in=product_ids)
-
-    # Create a list of tuples (product, quantity) for the template
-    cart_items = [(product, cart[str(product.id)]) for product in products]
-
-    return render(request, 'cart.html', {'cart_items': cart_items})
-
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    cart = request.session.get('cart', {})
-    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
-    request.session['cart'] = cart
-    request.session.modified = True
-    return redirect('cart')
 
 def remove_from_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -415,13 +404,13 @@ def cart(request):
                     changed_item.save()
                 else:
                     delete_cart(request,form.cleaned_data["product_id"])
-        cart_list = CartItem.objects.select_related("product").filter(customer = customer.pk)
+        cart_list = CartItem.objects.filter(customer = customer.pk)
         total = 0
         flag = True
         for item in cart_list:
-            item.subtotal  =(item.quantity * item.product.price)
-            total = total + (item.quantity * item.product.price)
-            if(item.quantity > item.product.stock):
+            item.subtotal  =(item.quantity * item.inventory.product.price)
+            total = total + (item.quantity * item.inventory.product.price)
+            if(item.quantity > item.inventory.quantity):
                 flag = False
         return render(request, "cart.html", {"user":user, "cart_list":cart_list, "total":total, "flag":flag})
     else:
@@ -448,10 +437,12 @@ def product_page(request, product_id):
    
     user = request.user
     product = Product.objects.get(id = product_id)
+    inventory_list = Inventory.objects.filter(product = product)
     review_list = Review.objects.filter(product= product)
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
-        cart = CartItem.objects.filter(customer =customer.pk).filter(product = product_id)
+        inv_list = Inventory.objects.filter(product = product)
+        cart = CartItem.objects.filter(customer =customer.pk).filter(inventory__in = inv_list)
         default_quant = 1
         flag = False
         if len(cart) > 0:
@@ -468,7 +459,6 @@ def product_page(request, product_id):
                     my_cart.quantity = temp_form.quantity
                     my_cart.save()
                     return HttpResponseRedirect("/")
-                temp_form.product = product
                 temp_form.customer= customer
                 
                 temp_form.save()
@@ -488,9 +478,16 @@ def product_page(request, product_id):
                     temp_form.customer = customer
                     temp_form.save()
                 review_list = Review.objects.filter(product= product)
-        form = addCart(product=product_id,customer=user, initial={"quantity":default_quant})
+        form_list = []
+        for inv in inventory_list:
+            new_form = addCart(inventory=inv.id,customer=user, initial={"quantity":default_quant})
+            new_form.fields['inventory'].initial = inv
+            field = new_form.fields['inventory']
+            field.widget = forms.HiddenInput()
+            form_list.append(new_form)
+            
         review_form = reviewForm()
-        return render(request, "product_page.html", {"form": form, "review_form": review_form, "product":product, "flag":flag,"reviews":review_list})
+        return render(request, "product_page.html", {"forms": form_list, "review_form": review_form, "product":product, "flag":flag,"reviews":review_list, "inventory":inventory_list})
     else:
         return render(request, "product_page.html", {"product":product, "reviews":review_list})
 
@@ -499,15 +496,14 @@ def checkout(request):
     user = request.user
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
-        checkout_cart = CartItem.objects.select_related("product").filter(customer = customer.pk)
-        print(len(checkout_cart))
+        checkout_cart = CartItem.objects.filter(customer = customer.pk)
         if(len(checkout_cart)<= 0):
             # should probably show an error message
             return HttpResponseRedirect("/")
         total = 0
         for item in checkout_cart:
-            total = total + item.product.price * item.quantity
-            if item.quantity > item.product.stock:
+            total = total + item.inventory.product.price * item.quantity
+            if item.quantity > item.inventory.quantity:
                 # again should probably lead to an error message
                 return HttpResponseRedirect("/")
             
@@ -517,7 +513,7 @@ def checkout(request):
             if form.is_valid():
                 total = 0
                 for item in checkout_cart:
-                    total = total + (item.quantity * item.product.price)
+                    total = total + (item.quantity * item.inventory.product.price)
                 new_transaction = Transaction(customer = customer, total_price = total,
                                               date_ordered = datetime.utcnow,
                                                 shipping_address = form.cleaned_data['shipping_address'] ,            
@@ -530,12 +526,12 @@ def checkout(request):
                         new_transaction.salesperson = Salesperson.objects.get(pk = salesperson)
                 new_transaction.save()
                 for item in checkout_cart:
-                    subtotal = (item.quantity * item.product.price)
-                    product = item.product
-                    new_trans_item = TransactionItem(transaction = new_transaction, product = product, quantity = item.quantity, price = subtotal, product_name = product.name
+                    subtotal = (item.quantity * item.inventory.product.price)
+                    inventory = item.inventory
+                    new_trans_item = TransactionItem(transaction = new_transaction, inventory = inventory, quantity = item.quantity, price = subtotal
  )
-                    product.stock = product.stock - item.quantity
-                    product.save()
+                    inventory.quantity = inventory.quantity - item.quantity
+                    inventory.save()
                     new_trans_item.save()
                 CartItem.objects.filter(customer = customer.pk).delete()
                 return HttpResponseRedirect("/")
