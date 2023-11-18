@@ -149,15 +149,6 @@ def remove_from_cart(request, product_id):
         request.session.modified = True
     return redirect('cart')
 
-def checkout(request):
-    if request.method == 'POST':
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
-            # Process checkout
-            pass  # Replace with your checkout processing code
-    else:
-        form = CheckoutForm()
-    return render(request, 'checkout.html', {'form': form})
 
 
 # Payment and Shipping
@@ -287,24 +278,6 @@ def review(request, product_id):
 def admin_check(user):
     return user.is_staff
 
-# Data Aggregation and Reporting
-@login_required
-@user_passes_test(admin_check)
-def sales_report(request):
-    total_sales = Transaction.objects.aggregate(Sum('total_price'))['total_price__sum']
-    return render(request, 'report_sales.html', {'total_sales': total_sales})
-
-@login_required
-@user_passes_test(admin_check)
-def product_report(request):
-    product_sales = Product.objects.annotate(sold=Sum('transaction_items__quantity'))
-    return render(request, 'report_product.html', {'product_sales': product_sales})
-
-@login_required
-@user_passes_test(admin_check)
-def region_report(request):
-    region_sales = Region.objects.annotate(sales=Sum('stores__salespersons__transactions__total_price'))
-    return render(request, 'report_region.html', {'region_sales': region_sales})
 
 # Administrative Interface
 @login_required
@@ -653,6 +626,100 @@ def shipping(request):
         })
 
     return render(request, 'shipping.html', {'form': form})
+
+
+# Aggregations and stuff
+def sales_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        products = Product.objects.all()
+        
+        return render(request, 'report_sales.html', {'products':products})
+
+def category_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        categories = Category.objects.all()
+        return render(request, 'category_report.html', {'categories':categories})
+def region_report(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        regions = Region.objects.all()
+        return render(request, 'report_region.html', {'regions':regions})
+    
+    
+def business_product_report_search(request):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        if request.method == 'POST':
+            form = SearchForm(request.POST)
+            if form.is_valid():
+                name = form.cleaned_data["name"]
+                description = form.cleaned_data["description"]
+                category = form.cleaned_data["category"]
+                seller = form.cleaned_data["seller"]
+                min_rating = form.cleaned_data["min_rating"]
+                available = form.cleaned_data["available"]
+                min = form.cleaned_data["min_price"]
+                max = form.cleaned_data["max_price"]
+                # You may be wondering why i did this I bult a query string instead of just using django well the project requires sql and this is sql
+                #products = Product.objects.all()
+                query = "Select * from app_product Where name like '%%" + name + "%%' and description like '%%" + description + "%%' and listed = True" 
+                #if name:
+                #    products = products.filter(name__icontains = name)
+                #if description:
+                #    products = products.filter(description__icontains = description)
+                if category:
+                    query = query + " and category_id = " + str(category.pk)
+                    #products = products.filter(category = category)
+                if seller:
+                    query = query + " and store_id = " + str(seller.pk)
+                products2 = Product.objects.raw(query)
+                if min_rating:
+                    ids_above_rating = [product.id for product in products2 if product.avg_rating() >= min_rating]
+                    if len(ids_above_rating) > 0:
+                        query = query + " and id in ("
+                        for id in ids_above_rating:
+                            query = query + str(id) + ","
+                        query = query[:len(query)-1]
+                        query = query +")"
+                    else:
+                        query = query + " and FALSE "
+                    #products = products.filter(id__in = ids_above_rating)
+                products2 = Product.objects.raw(query)
+                if not available:
+                    ids_above_total_stock= [product.id for product in products2 if product.total_stock() > 0]
+                    if len(ids_above_total_stock) > 0:
+                        query = query + " and id in ("
+                        for id in ids_above_total_stock:
+                            query = query + str(id) + ","
+                        query = query[:len(query)-1]
+                        query = query +")"
+                    else:
+                        query = query + " and FALSE "
+                    #products = products.filter( stock__gt  = 0)
+                if min:
+                    query = query + " and price >= " + str(min)
+                    #products = products.filter( price__gt  = min)
+                if max:
+                    query = query + " and price <= " + str(max)
+                    #products = products.filter( price__lt  = max)
+                products2 = Product.objects.raw(query)
+                return render(request,'search_report_results.html', {'products_list': products2} )
+        else:
+            form = SearchForm()
+        return render(request, 'search.html', {'form': form})
+        
+def business_product_report(request, product_id):
+    user = request.user
+    if user.has_perm("ap.associate"):
+        product = Product.objects.get(pk = product_id)
+        businesses = Customer.objects.filter(kind="Business")
+        anno_businesses = businesses.annotate(amount_purchased = Sum("customer_transactions__transaction__quantity"), filter = Q(customer_transactions__transaction__inventory__product__id = product_id))
+        return render(request, 'report_business_product.html', {'businesses':anno_businesses, "product":product})
+        
+        
+    
 
 # Helper objects and functions for AJAX functionality
 switch = {

@@ -45,8 +45,10 @@ urlpatterns = [
 
     # Data Aggregation and Reporting URLs
     path('reports/sales/', views.sales_report, name='sales_report'),
-    path('reports/products/', views.product_report, name='product_report'),
+    path('reports/category/', views.category_report, name='category_report'),
     path('reports/regions/', views.region_report, name='region_report'),
+    path('reports/business/', views.business_product_report_search, name='business_product_report_search'),
+    path('reports/business/<int:product_id>', views.business_product_report, name='business_product_report'),
 
     # Miscellaneous URLs
     path('ajax/', views.ajax),

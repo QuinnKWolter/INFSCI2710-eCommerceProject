@@ -2,19 +2,21 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Region Sales Report</h1>
+    <h1>amount each business has purchased of {{product.name}}</h1>
     <table id="categoryTable" class="table table-striped" style="width:100%">
         <thead>
             <tr>
-                <th>Region Name</th>
+                <th>Business Name</th>
+                <th>Business ID</th>
                 <th>Total Sales</th>
             </tr>
         </thead>
         <tbody>
-            {% for region in regions %}
+            {% for business in businesses %}
             <tr>
-                <td>{{ region.name }}</td>
-                <td>{{ region.sales_volume }}</td>
+                <td>{{ business.name }}</td>
+                <td>{{ business.id.description }}</td>
+                <td>${{ business.amount_purchased }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -24,7 +26,7 @@
     $(document).ready(function() {
         $('#categoryTable').DataTable({
             'columnDefs': [
-                { 'orderable': false } // Disable sorting on the first and third columns
+                { 'orderable': false, 'targets': [1] } // Disable sorting on the first and third columns
             ]
         });
     });
