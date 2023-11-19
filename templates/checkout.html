@@ -34,7 +34,7 @@
             <h2>Checkout</h2>
             <form method="post">
                 {% csrf_token %}
-                {% include 'stripe_payment.html' %}
+                <!-- {% include 'stripe_payment.html'} -->
                 {{ form|crispy }}
                 <button type="submit" class="btn btn-primary">Submit Order</button>
             </form>
