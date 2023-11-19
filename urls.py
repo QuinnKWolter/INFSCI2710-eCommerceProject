@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from app.webhooks import stripe_webhook
 from app import views
 
 urlpatterns = [
@@ -32,6 +33,10 @@ urlpatterns = [
     path('shipping/', views.shipping, name='shipping'),
     path('transaction/history/', views.transaction_history, name='transaction_history'),
     path('transaction/history/<int:customer_id>/', views.transaction_history_customer, name='transaction_history_customer'),
+    path(r'stripe/webhook/', stripe_webhook, name='stripe-webhook'),
+    path(r'stripe/payment/', views.StripePayment.as_view(), name='stripe-payment'),
+    path(r'stripe/success/', views.StripeSuccess.as_view(), name='stripe-success'),
+    path(r'stripe/cancel/', views.StripeCancel.as_view(), name='stripe-cancel'),
 
     # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),

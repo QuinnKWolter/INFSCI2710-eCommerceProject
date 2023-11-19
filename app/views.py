@@ -5,7 +5,7 @@ import random
 from django.db import connection
 from .forms import *
 from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, View
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -19,7 +19,6 @@ from django.http import (
     JsonResponse
 )
 from django.db.models import Q
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -30,6 +29,7 @@ from django.db.models import Sum, Count
 from .models import Product, Transaction, TransactionItem, Salesperson, Store, Region
 from .forms import *
 from datetime import datetime
+from settings import STRIPE_PUBLIC_KEY
 
 # Index View
 def index(request):
@@ -148,7 +148,6 @@ def remove_from_cart(request, product_id):
         request.session['cart'] = cart
         request.session.modified = True
     return redirect('cart')
-
 
 
 # Payment and Shipping
@@ -412,6 +411,15 @@ def product_page(request, product_id):
     product = Product.objects.get(id = product_id)
     inventory_list = Inventory.objects.filter(product = product)
     review_list = Review.objects.filter(product= product)
+
+    # Create a form with a dropdown for inventory selection
+    inventory_choices = [(inv.id, f"{inv.store.address} - {inv.quantity} in stock") for inv in inventory_list]
+    class InventoryForm(forms.Form):
+        inventory = forms.ChoiceField(choices=inventory_choices, label="Select Store")
+        quantity = forms.IntegerField(initial=1, min_value=1)
+    
+    inventory_form = InventoryForm()
+
     if(user.is_authenticated):
         customer = Customer.objects.get(id = user.id)
         inv_list = Inventory.objects.filter(product = product)
@@ -422,25 +430,27 @@ def product_page(request, product_id):
             default_quant = cart[0].quantity
             my_cart = cart[0]
             flag = True
-        if request.method == "POST":
-            
+        if request.method == "POST": 
+            # Initialize form with POST data for POST requests
+            inventory_form = InventoryForm(request.POST)
+
             form = confirmAdd(request.POST )
             if form.is_valid():
-                    
                 temp_form = form.save(commit=False)
                 if len(cart) > 0:
                     my_cart.quantity = temp_form.quantity
                     my_cart.save()
                     return HttpResponseRedirect("/")
-                temp_form.customer= customer
+                temp_form.customer = customer
                 
                 temp_form.save()
                 return HttpResponseRedirect("/")
             form = reviewForm(request.POST)
+
             if form.is_valid():
                 temp_form = form.save(commit=False)
-                print (form.cleaned_data)
-                review= Review.objects.filter(customer =customer.pk).filter(product = product_id)
+                print(form.cleaned_data)
+                review = Review.objects.filter(customer=customer.pk).filter(product = product_id)
                 if len(review) > 0:
                     my_review = review[0]
                     my_review.rating = temp_form.rating
@@ -460,7 +470,7 @@ def product_page(request, product_id):
             form_list.append(new_form)
             
         review_form = reviewForm()
-        return render(request, "product_page.html", {"forms": form_list, "review_form": review_form, "product":product, "flag":flag,"reviews":review_list, "inventory":inventory_list})
+        return render(request, "product_page.html", {"inventory_form": inventory_form, "review_form": review_form, "product": product, "flag": flag, "reviews": review_list, "inventory": inventory_list})
     else:
         return render(request, "product_page.html", {"product":product, "reviews":review_list})
 
@@ -525,11 +535,8 @@ def transaction_history(request):
         elif user.has_perm("app.region_manager"):
             salesperson = Salesperson.objects.get(pk = customer.pk)
             transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
- 
         elif user.has_perm("app.associate"):
-
             salesperson = Salesperson.objects.get(pk = customer.pk)
-            
             transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
         else:
             transactions = TransactionItem.objects.filter(transaction__customer=customer)
@@ -539,7 +546,6 @@ def transaction_history(request):
         return redirect('login')
     
 def transaction_history_customer(request,customer_id):
-    
     user = request.user
     if(user.is_authenticated):
         salesperson = Salesperson.objects.get(id = request.user.id)
@@ -758,3 +764,28 @@ def ajax(request):
 
         # execute the function
         return procedure(request)
+
+
+# QKW - Stripe Views
+class StripePayment(View):
+    def get(self, request, *args, **kwargs):
+        context = {
+            'stripe_public_key': STRIPE_PUBLIC_KEY
+        }
+        return render(request, 'stripe_payment.html', context)
+
+
+class StripeSuccess(View):
+    def get(self, request, *args, **kwargs):
+        # Gotta put successful payment stuff here!
+        # e.g., updating order status, sending confirmation email, etc.
+        # Create the subscription model, then figure this out.
+        # TODO Do we register the subscription with Stripe and register a cancellation later?
+        # TODO Or do we do a single payment and handle periodicity on our end?
+        return render(request, 'stripe_success.html')
+
+
+class StripeCancel(View):
+    def get(self, request, *args, **kwargs):
+        # TODO I need to read more into cancellations, rejections, etc. etc.
+        return render(request, 'stripe_cancel.html')

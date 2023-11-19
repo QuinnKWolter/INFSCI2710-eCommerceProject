@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load rating_stars %}
 
 {% block content %}
 <div class="container mt-4">
@@ -7,7 +8,6 @@
             <tr>
                 <th>Image</th>
                 <th>Name</th>
-                <th>Description</th>
                 <th>Stock</th>
                 <th>Rating</th>
             </tr>
@@ -26,14 +26,12 @@
                     <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
                 </td>
                 <td>
-                    {{ product.description }}
-                </td>
-                <td>
                     {{ product.total_stock }}
                 </td>
                 <td>
-                    {{ product.avg_rating }}
-                </td>
+                    <div class="d-none">{{ product.avg_rating }}</div>
+                    {% rating_stars product.avg_rating %}
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
@@ -44,7 +42,8 @@
     $(document).ready(function() {
         $('#productsTable').DataTable({
             'columnDefs': [
-                { 'orderable': false, 'targets': [0, 2] } // Disable sorting on the first and third columns
+            {'orderable': false, 'targets': [0], 'width': '200px'},
+            {'targets': [3], 'width': '75px'},
             ]
         });
     });
