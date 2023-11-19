@@ -3,7 +3,7 @@ import csv
 # from django.db import models
 from django.contrib.auth.models import User, Permission
 from app.models import Store, Region, Salesperson
-
+from django.contrib.auth.hashers import make_password
 
 def import_csvdata(filepath):
     with open (filepath, 'r') as csvfile:
@@ -16,7 +16,7 @@ def import_csvdata(filepath):
 
             manager = Salesperson(
                     username = "manager" + str(i),
-                    password = "a_strong_password",
+                    password = make_password("a_strong_password",  hasher='default'),
                     kind = "Manager",
                     name = "manager name",
                     street_address = "default",
@@ -40,6 +40,8 @@ def import_csvdata(filepath):
                 region =Region.objects.get(name = row[4]))
             
             sto.save()
+            manager.store = sto
+            manager.save()
            
 #if __name__ == '__main__':
 

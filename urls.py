@@ -35,13 +35,14 @@ urlpatterns = [
 
     # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),
+    path('stores/', views.store_list, name='store_list'),
+    path('stores/<int:store_id>/', views.store_page, name='store_page'),
 
     # Store and Inventory Management URLs
     path('inventory/', views.inventory, name='inventory'),
     path('inventory/update/<int:product_id>/', views.update_inventory, name='update_inventory'),
 
-    # Review URLs
-    path('review/<int:product_id>/', views.review, name='review'),
+
 
     # Data Aggregation and Reporting URLs
     path('reports/sales/', views.sales_report, name='sales_report'),

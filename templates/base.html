@@ -75,6 +75,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'search' %}">Search</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                    </li>
                     <!-- Administrative Interface Links -->
                     {% if request.user.is_staff %}
                     <li class="nav-item dropdown">
@@ -97,6 +100,7 @@
                             {% if request.user.is_staff %}
                             {% endif %}
                             {% if perms.app.region_manager %}
+                                <li><a class="dropdown-item" href="{% url 'store_list' %}">list stores</a></li>
                                 {#<li><a class="dropdown-item" href="{% url 'add_store' %}">add store</a></li>#}
                                 {#<li><a class="dropdown-item" href="{% url 'add_manager' %}">add manager</a></li>#} 
                                 {#<li><a class="dropdown-item" href="{% url 'edit_managers' %}">edit manager</a></li>#}
