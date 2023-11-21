@@ -70,12 +70,12 @@
                                                 <li><a class="dropdown-item" href="{% url 'store_list' %}">List Stores</a></li>
                                                 {#<li><a class="dropdown-item" href="{% url 'add_store' %}">Add Store</a></li>#}
                                                 {#<li><a class="dropdown-item" href="{% url 'edit_stores' %}">Edit Stores</a></li>#}
-                                                {#<li><a class="dropdown-item" href="{% url 'add_manager' %}">Add Manager</a></li>#} 
+                                                <li><a class="dropdown-item" href="{% url 'new_manager' %}">Add Manager</a></li>
                                                 {#<li><a class="dropdown-item" href="{% url 'edit_managers' %}">Edit Managers</a></li>#}
                                             {% endif %}
                                             {% if perms.app.manager %}
-                                                <li><a class="dropdown-item" href="{% url 'store_redirect' %}">my store</a></li>
-                                                {#<li><a class="dropdown-item" href="{% url 'add_manager' %}">Add Associate</a></li>#} 
+                                                <li><a class="dropdown-item" href="{% url 'store_redirect' %}">My store</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'new_employee' %}">Add Associate</a></li>
                                                 {#<li><a class="dropdown-item" href="{% url 'add_product' %}">Add Product</a></li>#} 
                                                 {#<li><a class="dropdown-item" href="{% url 'edit_products' %}">Edit Products</a></li>#} 
                                             {% endif %}

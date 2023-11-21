@@ -340,11 +340,13 @@ def new_employee(request):
     user = request.user
     if user.has_perm("app.manager"):
         if request.method == "POST":
-            form = newCompany(request.POST)
+            form = newAssociate(request.POST)
             if form.is_valid():
                 temp= form.save(commit=False)
+                temp.kind ="Associate"
                 temp.save()
                 associate_perm = Permission.objects.get(codename="associate")
+                
                 manager_perm = Permission.objects.get(codename="manager")
                 temp.user_permissions.add(associate_perm)
                 if temp.kind == "Manager":
@@ -353,7 +355,29 @@ def new_employee(request):
                 return HttpResponseRedirect("/")
         # if a GET (or any other method) we'll create a blank form
         else:
-            form = newEmployee()
+            form = newAssociate()
+
+        return render(request, "new_user.html", {"form": form})
+def new_manager(request):
+    user = request.user
+    if user.has_perm("app.region_manager"):
+        if request.method == "POST":
+            form = newManager(request.POST)
+            if form.is_valid():
+                temp= form.save(commit=False)
+                temp.kind ="Manager"
+                temp.save()
+                associate_perm = Permission.objects.get(codename="associate")
+                
+                manager_perm = Permission.objects.get(codename="manager")
+                temp.user_permissions.add(associate_perm)
+                if temp.kind == "Manager":
+                    temp.user_permissions.add(manager_perm)
+                temp.save()
+                return HttpResponseRedirect("/")
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = newManager()
 
         return render(request, "new_user.html", {"form": form})
     

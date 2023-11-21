@@ -15,10 +15,14 @@ class newCompany(UserCreationForm):
     class Meta:
         model = Customer
         fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","business_category","annual_income", 'password1', 'password2')
-class newEmployee(UserCreationForm):
+class newAssociate(UserCreationForm):
     class Meta:
         model = Salesperson
-        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","kind","job_title","store","salary","region", 'password1', 'password2')
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","job_title","store","salary", 'password1', 'password2')
+class newManager(UserCreationForm):
+    class Meta:
+        model = Salesperson
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","job_title","store","salary", 'password1', 'password2')
 
 class addCart(forms.ModelForm):
     def __init__(self, inventory, customer, *args, **kwargs):
