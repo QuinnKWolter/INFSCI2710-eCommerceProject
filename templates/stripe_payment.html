@@ -1,0 +1,26 @@
+<div class="container mt-4">
+    <h2>Checkout with Stripe</h2>
+    <p>Click the button below to fill out your payment details:</p>
+    <button id="checkout-button" class="btn btn-primary">Pay with Stripe</button>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // QKW3 - NOTE: ALL stripe SDK interactions are carried out through this object.
+    var stripe = Stripe('pk_test_2oFUeGJNu8Y1O4QboUdgwuP0');
+
+    var checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', function () {
+        stripe.redirectToCheckout({
+            lineItems: [{price: 'price_1ODMk7Br9dz32qWMX9di7KRI', quantity: 1}],
+            mode: 'subscription',
+            successUrl: window.location.protocol + '//' + window.location.host + '/stripe/success/',
+            cancelUrl: window.location.protocol + '//' + window.location.host + '/stripe/cancel/',
+        })
+        .then(function (result) {
+            if (result.error) {
+                alert(result.error.message);
+            }
+        });
+    });
+</script>

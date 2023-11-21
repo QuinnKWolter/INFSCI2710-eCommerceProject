@@ -2,3 +2,5 @@ django==4.2.6
 django-cors-headers==4.3.0
 django-crispy-forms==2.1
 crispy-bootstrap5==0.7
+django_extensions==3.2.3
+stripe==7.5.0

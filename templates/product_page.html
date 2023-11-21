@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load rating_stars %}
 
 {% block title %}product page{% endblock %}
 
@@ -28,22 +29,18 @@
             {% else %}
             <p class="text-success">In Stock: {{ product.total_stock }}</p>
             <!-- Add to Cart Form -->
-            {% for form in forms %}
-                {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
                 <form method="post">
                     {% csrf_token %}
-                    {{ form|crispy }}
+                    {{ inventory_form|crispy }}
                     {% if flag %}
                         <button type="submit" class="btn btn-primary">Update Cart</button>
                     {% else %}
                         <button type="submit" class="btn btn-primary">Add to Cart</button>
                     {% endif %}
                 </form>
-                {% endif %}
-            {% endfor %}
             {% endif %}
-
-
+            {% endif %}
         </div>
         
         <h2>Reviews</h2>
@@ -72,8 +69,9 @@
                     <td>
                         {{ review.comment }}
                     </td>
-                    <td>
-                        {{ review.rating }}
+                    <td class="text-nowrap text-warning">
+                        <div class="d-none">{{ review.rating }}</div>
+                        {% rating_stars review.rating %}
                     </td>
                 </tr>
                 {% endfor %}
@@ -82,7 +80,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-
-

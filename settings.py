@@ -18,6 +18,10 @@ BASE_DIR = Path(__file__).resolve().parent
 # Fake Django SECRET_KEY for development use only
 SECRET_KEY = 'e1x9w2c3e4v5b6n7m8o9p0zaxsfqadsvzxcvlkn'
 
+# Stripe settings
+STRIPE_PUBLIC_KEY = 'pk_test_2oFUeGJNu8Y1O4QboUdgwuP0'
+STRIPE_SECRET_KEY = 'sk_test_UwtOYq796LCxVMTJ42R8cXHV'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -27,7 +31,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'app',
     'django.contrib.admin',

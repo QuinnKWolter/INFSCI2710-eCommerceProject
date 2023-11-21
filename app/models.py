@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from django.db.models import Avg, Count, Min, Sum
 from django.contrib.auth.models import Permission
+
 # Category Model
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -17,6 +18,7 @@ class Category(models.Model):
         for product in products:
             profit = profit + product.total_profit()
         return round(profit,2)
+
 
 # Product Model
 # quick note for aggregation 
@@ -40,6 +42,7 @@ class Product(models.Model):
             return avg / len(ratings)
         else:
             return 0
+
     def total_stock(self):
         items = Inventory.objects.filter(product = self)
         stock = 0
@@ -80,6 +83,7 @@ class Inventory(models.Model):
     def __str__(self):
         return f'{self.product.name} ({self.quantity}) in {self.store}'
 
+
 # Store Model
 class Store(models.Model):
     address = models.CharField(max_length=300)
@@ -88,6 +92,7 @@ class Store(models.Model):
 
     def __str__(self):
         return self.address
+
     def employee_count(self):
         return len(Salesperson.objects.filter(store_assigned = self))
     def profit(self):
@@ -104,6 +109,7 @@ class Store(models.Model):
             w = transactions.aggregate(total = Sum("quantity"))
             total = w["total"]
         return total
+
 
 
 # Region Model
@@ -127,6 +133,7 @@ class Region(models.Model):
         return total
     
 
+
 # Customer Model
 class Customer(User):
     name = models.CharField(max_length=200)
@@ -148,15 +155,18 @@ class Customer(User):
 
     def __str__(self):
         return self.name
-    
+
+
 # Salesperson Model it only exists because its in the prompt and is completely unneccasary
 class Salesperson(Customer):
     store = models.ForeignKey('Store', related_name='salespersons', on_delete=models.SET_NULL, null=True, blank=True)
     job_title = models.CharField(max_length=100)
     salary = models.DecimalField(max_digits=10, decimal_places=2)
     region = models.ForeignKey('Region', related_name='region', on_delete=models.SET_NULL, null=True, blank=True)
+
     def __str__(self):
         return self.name
+
     class Meta:
         # admins will have is_staff checked off and get all perms
        permissions = (("associate", "not quite sure what associates can do"), 
@@ -174,7 +184,6 @@ class Transaction(models.Model):
         ('Delivered', 'Delivered'),
     )
     
-    # Linking to Customer and Salesperson models
     customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.CASCADE)
     salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True)
     date_ordered = models.DateTimeField(auto_now_add=False)
@@ -193,8 +202,8 @@ class Transaction(models.Model):
         return_text = ""
         for item in items:
             return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' $' +str(item.price)+ ','
-        return return_text
-            
+        return return_text     
+
 
 # OrderItem Model
 class TransactionItem(models.Model):
@@ -214,6 +223,7 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.CharField(max_length=1000)
 
+
 # CartItem Model
 class CartItem(models.Model):
     customer = models.ForeignKey(Customer, related_name='items', on_delete=models.CASCADE)
@@ -224,13 +234,14 @@ class CartItem(models.Model):
         return f'Review by {self.customer} for {self.product}'
     def subtotal(self):
         return self.inventory.product.price * self.quantity
-    
-# permissions
+
+
+# Permissions
 class CustomUserPermissions:
     class Meta:
         # admins will have is_staff checked off and get all perms
        permissions = (("associate", "not quite sure what associates can do"), 
                       ("manager", "can change stock and list/delist products and delete them can also add associates"),
-                       ( "region_manager","can view regional data and do things for the region can add stores and managers"),
+                       ("region_manager","can view regional data and do things for the region can add stores and managers"),
                        )
     

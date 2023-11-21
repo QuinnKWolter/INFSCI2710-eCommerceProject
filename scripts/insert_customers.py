@@ -3,7 +3,7 @@
     #    'PHONE', 'ISBUSINESS', 'BUSINESS_CATEGORIES', 'MARITAL_STATUS',
     #    'ISFEMALE', 'AGE', 'EMAIL'],
     #   dtype='object')
-
+from django.contrib.auth.hashers import make_password
 import pandas
 from app.models import Customer
 from django.contrib.auth.models import User

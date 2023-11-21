@@ -1,14 +1,16 @@
 {% extends "base.html" %}
-{% load rating_stars %}
 
 {% block content %}
 <div class="container mt-4">
+    <h2>Search results</h2>
     <table id="productsTable" class="table table-striped" style="width:100%">
         <thead>
             <tr>
                 <th>Image</th>
                 <th>Name</th>
+                <th>Description</th>
                 <th>Stock</th>
+                <th>Price</th>
                 <th>Rating</th>
             </tr>
         </thead>
@@ -16,6 +18,7 @@
             {% for product in products_list %}
             <tr>
                 <td>
+                    <!-- Make sure to provide the correct path to your product images -->
                     {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
                     {% else %}
@@ -23,15 +26,24 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
+                    <a href="{% url 'business_product_report' product.id %}">{{ product.name }}</a>
                 </td>
                 <td>
-                    {{ product.total_stock }}
+                    {{ product.description }}
                 </td>
-                <td class="text-nowrap text-warning">
-                    <div class="d-none">{{ product.avg_rating }}</div>
-                    {% rating_stars product.avg_rating %}
-                </td>                
+                <td>
+                    {% if product.total_stock == 0 %}
+                    <p class="text-danger">Sold Out</p>
+                    {% else %}
+                    <p class="text-success">In Stock: {{ product.total_stock }}</p>
+                    {%endif%}
+                </td>
+                <td>
+                    ${{ product.price }}
+                </td>
+                <td>
+                    {{ product.avg_rating }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -39,13 +51,9 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#productsTable').DataTable({
-            'columnDefs': [
-            {'orderable': false, 'targets': [0], 'width': '200px'},
-            {'targets': [3], 'width': '75px'},
-            ]
-        });
-    });
+document.addEventListener("DOMContentLoaded", function(){
+    $('#productsTable').DataTable();
+});
 </script>
+
 {% endblock %}
