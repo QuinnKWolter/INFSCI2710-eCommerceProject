@@ -45,6 +45,11 @@ class reviewForm(forms.ModelForm):
 class cartForm(forms.Form):
     quantity = forms.IntegerField()
     product_id = forms.IntegerField()
+    
+class storeForm(forms.Form):
+    quantity = forms.IntegerField()
+    product_id = forms.IntegerField()
+
 
 class CheckoutForm(forms.Form):
     full_name = forms.CharField(

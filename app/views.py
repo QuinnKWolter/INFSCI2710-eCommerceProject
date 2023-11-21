@@ -360,7 +360,7 @@ def cart(request):
             form = cartForm(request.POST)
             if form.is_valid():
 
-                changed_item = CartItem.objects.get(pk = form.cleaned_data["product_id"])
+                changed_item = CartItem.objects.get(inventory__product__id = form.cleaned_data["product_id"])
                 changed_item.quantity = form.cleaned_data["quantity"]
                 if form.cleaned_data["quantity"] > 0:
                     changed_item.save()
@@ -719,16 +719,26 @@ def business_product_report(request, product_id):
 def store_list(request):
     user = request.user
     if user.has_perm("ap.region_manager"):
-        salesperson = Salesperson.objects.get(pk = user.id)
-        stores_list = Store.objects.filter(region = salesperson.store.region)
+        if(user.is_staff):
+            stores_list = Store.objects.filter()
+        else:
+            salesperson = Salesperson.objects.get(pk = user.id)
+            stores_list = Store.objects.filter(region = salesperson.store.region)
         return render(request, 'store_list.html', {'stores_list':stores_list})
     
 def store_page(request, store_id):
     user = request.user
     if user.has_perm("ap.region_manager"):
-        salesperson = Salesperson.objects.get(pk = user.id)
-        store= Store.objects.filter(pk = store_id)
-        inventories = Inventory.objects.filter(store = store)
+        
+        if request.method == "POST":
+            form = storeForm(request.POST)
+            if form.is_valid():
+                changed_item = Inventory.objects.get(pk = form.cleaned_data["product_id"])
+                changed_item.quantity = form.cleaned_data["quantity"]
+                changed_item.save()
+
+        store= Store.objects.filter(id = store_id)
+        inventories = Inventory.objects.filter(store__id = store_id)
         return render(request, 'store.html', {'store':store, 'inventories':inventories})
     
 
