@@ -39,7 +39,7 @@ def index(request):
     top_products = top_products[:6]
     return render(request, 'index.html',{'top_products': top_products})
 
-# Index View
+# About View
 def about(request):
     return render(request, 'about.html')
 

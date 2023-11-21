@@ -8,6 +8,7 @@ from app import views
 urlpatterns = [
     # Home and Account URLs
     path('', views.index, name='index'),
+    path('about/', views.about, name='about'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.new_user, name='new_user'),
     path('accounts/register_company/', views.new_company, name='new_company'),
@@ -20,7 +21,6 @@ urlpatterns = [
     
     # Search urls
     path('search/', views.search, name='search'),
-    
     
     # Cart and Checkout URLs
     path('cart/', views.cart, name='cart'),
@@ -46,8 +46,6 @@ urlpatterns = [
     # Store and Inventory Management URLs
     path('inventory/', views.inventory, name='inventory'),
     path('inventory/update/<int:product_id>/', views.update_inventory, name='update_inventory'),
-
-
 
     # Data Aggregation and Reporting URLs
     path('reports/sales/', views.sales_report, name='sales_report'),
