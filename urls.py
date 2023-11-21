@@ -12,6 +12,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.new_user, name='new_user'),
     path('accounts/register_company/', views.new_company, name='new_company'),
+    path('accounts/register_employee/', views.new_employee, name='new_employee'),
 
     # Product and Category URLs
     path('products/', views.product_list, name='product_list'),

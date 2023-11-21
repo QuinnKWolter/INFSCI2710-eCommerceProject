@@ -336,6 +336,27 @@ def new_company(request):
 
     return render(request, "new_user.html", {"form": form})
 
+def new_employee(request):
+    user = request.user
+    if user.has_perm("app.manager"):
+        if request.method == "POST":
+            form = newCompany(request.POST)
+            if form.is_valid():
+                temp= form.save(commit=False)
+                temp.save()
+                associate_perm = Permission.objects.get(codename="associate")
+                manager_perm = Permission.objects.get(codename="manager")
+                temp.user_permissions.add(associate_perm)
+                if temp.kind == "Manager":
+                    temp.user_permissions.add(manager_perm)
+                temp.save()
+                return HttpResponseRedirect("/")
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = newEmployee()
+
+        return render(request, "new_user.html", {"form": form})
+    
 def product_list(request):
     products = Product.objects.filter(listed = True)
     return render(request, 'product_list.html', {'products_list': products})
