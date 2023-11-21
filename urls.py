@@ -41,6 +41,7 @@ urlpatterns = [
     # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),
     path('stores/', views.store_list, name='store_list'),
+    path('stores/redirect', views.store_redirect, name='store_redirect'),
     path('stores/<int:store_id>/', views.store_page, name='store_page'),
 
     # Store and Inventory Management URLs
