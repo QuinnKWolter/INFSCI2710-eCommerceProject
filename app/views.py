@@ -33,7 +33,11 @@ from settings import STRIPE_PUBLIC_KEY
 
 # Index View
 def index(request):
-    return render(request, 'index.html')
+    top_products = Product.objects.all()
+    top_products = top_products.annotate(amount_purchased = Sum("inventory_items__order_items__quantity"))
+    top_products = top_products.order_by("-amount_purchased")
+    top_products = top_products[:6]
+    return render(request, 'index.html',{'top_products': top_products})
 
 # Index View
 def about(request):
@@ -258,20 +262,6 @@ def update_inventory(request, product_id):
     else:
         form = UpdateInventoryForm(instance=product)
     return render(request, 'update_inventory.html', {'form': form})
-
-# Review
-def review(request, product_id):
-    product = get_object_or_404(Product, pk=product_id)
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.product = product
-            review.save()
-            return redirect('product_detail', product_id=product.id)
-    else:
-        form = ReviewForm()
-    return render(request, 'review.html', {'form': form, 'product': product})
 
 # Check if user is an admin
 def admin_check(user):
@@ -724,7 +714,22 @@ def business_product_report(request, product_id):
         anno_businesses = businesses.annotate(amount_purchased = Sum("customer_transactions__transaction__quantity"), filter = Q(customer_transactions__transaction__inventory__product__id = product_id))
         return render(request, 'report_business_product.html', {'businesses':anno_businesses, "product":product})
         
-        
+# managment stuffs
+
+def store_list(request):
+    user = request.user
+    if user.has_perm("ap.region_manager"):
+        salesperson = Salesperson.objects.get(pk = user.id)
+        stores_list = Store.objects.filter(region = salesperson.store.region)
+        return render(request, 'store_list.html', {'stores_list':stores_list})
+    
+def store_page(request, store_id):
+    user = request.user
+    if user.has_perm("ap.region_manager"):
+        salesperson = Salesperson.objects.get(pk = user.id)
+        store= Store.objects.filter(pk = store_id)
+        inventories = Inventory.objects.filter(store = store)
+        return render(request, 'store.html', {'store':store, 'inventories':inventories})
     
 
 # Helper objects and functions for AJAX functionality

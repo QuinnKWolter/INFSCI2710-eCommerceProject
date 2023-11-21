@@ -3,7 +3,7 @@
     #    'PHONE', 'ISBUSINESS', 'BUSINESS_CATEGORIES', 'MARITAL_STATUS',
     #    'ISFEMALE', 'AGE', 'EMAIL'],
     #   dtype='object')
-
+from django.contrib.auth.hashers import make_password
 import pandas
 from app.models import Customer
 from django.contrib.auth.models import User
@@ -27,7 +27,7 @@ for i,row in enumerate(customers.itertuples()):
         username = username,
         name = row.reviewerName,
         email = row.EMAIL,
-        password = 'password',
+        password = make_password("a_strong_password",  hasher='default'),
         phone_number = row.PHONE,
         street_address = str(row.NUMBER) + str(row.STREET),
         city = row.CITY,
