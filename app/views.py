@@ -360,7 +360,7 @@ def cart(request):
             form = cartForm(request.POST)
             if form.is_valid():
 
-                changed_item = CartItem.objects.get(inventory__product__id = form.cleaned_data["product_id"])
+                changed_item = CartItem.objects.get(pk = form.cleaned_data["product_id"])
                 changed_item.quantity = form.cleaned_data["quantity"]
                 if form.cleaned_data["quantity"] > 0:
                     changed_item.save()
