@@ -336,6 +336,51 @@ def new_company(request):
 
     return render(request, "new_user.html", {"form": form})
 
+def new_employee(request):
+    user = request.user
+    if user.has_perm("app.manager"):
+        if request.method == "POST":
+            form = newAssociate(request.POST)
+            if form.is_valid():
+                temp= form.save(commit=False)
+                temp.kind ="Associate"
+                temp.save()
+                associate_perm = Permission.objects.get(codename="associate")
+                
+                manager_perm = Permission.objects.get(codename="manager")
+                temp.user_permissions.add(associate_perm)
+                if temp.kind == "Manager":
+                    temp.user_permissions.add(manager_perm)
+                temp.save()
+                return HttpResponseRedirect("/")
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = newAssociate()
+
+        return render(request, "new_user.html", {"form": form})
+def new_manager(request):
+    user = request.user
+    if user.has_perm("app.region_manager"):
+        if request.method == "POST":
+            form = newManager(request.POST)
+            if form.is_valid():
+                temp= form.save(commit=False)
+                temp.kind ="Manager"
+                temp.save()
+                associate_perm = Permission.objects.get(codename="associate")
+                
+                manager_perm = Permission.objects.get(codename="manager")
+                temp.user_permissions.add(associate_perm)
+                if temp.kind == "Manager":
+                    temp.user_permissions.add(manager_perm)
+                temp.save()
+                return HttpResponseRedirect("/")
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = newManager()
+
+        return render(request, "new_user.html", {"form": form})
+    
 def product_list(request):
     products = Product.objects.filter(listed = True)
     return render(request, 'product_list.html', {'products_list': products})
@@ -627,26 +672,26 @@ def shipping(request):
 # Aggregations and stuff
 def sales_report(request):
     user = request.user
-    if user.has_perm("ap.associate"):
+    if user.has_perm("app.associate"):
         products = Product.objects.all()
         
         return render(request, 'report_sales.html', {'products':products})
 
 def category_report(request):
     user = request.user
-    if user.has_perm("ap.associate"):
+    if user.has_perm("app.associate"):
         categories = Category.objects.all()
         return render(request, 'category_report.html', {'categories':categories})
 def region_report(request):
     user = request.user
-    if user.has_perm("ap.associate"):
+    if user.has_perm("app.associate"):
         regions = Region.objects.all()
         return render(request, 'report_region.html', {'regions':regions})
     
     
 def business_product_report_search(request):
     user = request.user
-    if user.has_perm("ap.associate"):
+    if user.has_perm("app.associate"):
         if request.method == 'POST':
             form = SearchForm(request.POST)
             if form.is_valid():
@@ -708,7 +753,7 @@ def business_product_report_search(request):
         
 def business_product_report(request, product_id):
     user = request.user
-    if user.has_perm("ap.associate"):
+    if user.has_perm("app.associate"):
         product = Product.objects.get(pk = product_id)
         businesses = Customer.objects.filter(kind="Business")
         anno_businesses = businesses.annotate(amount_purchased = Sum("customer_transactions__transaction__quantity"), filter = Q(customer_transactions__transaction__inventory__product__id = product_id))
@@ -718,17 +763,33 @@ def business_product_report(request, product_id):
 
 def store_list(request):
     user = request.user
-    if user.has_perm("ap.region_manager"):
-        salesperson = Salesperson.objects.get(pk = user.id)
-        stores_list = Store.objects.filter(region = salesperson.store.region)
+    if user.has_perm("app.region_manager"):
+        if(user.is_staff):
+            stores_list = Store.objects.filter()
+        else:
+            salesperson = Salesperson.objects.get(pk = user.id)
+            stores_list = Store.objects.filter(region = salesperson.store.region)
         return render(request, 'store_list.html', {'stores_list':stores_list})
+
+def store_redirect(request):
+    user = request.user
+    if user.has_perm("app.manager"):
+        salesperson = Salesperson.objects.get(pk = user.id)
+        return redirect("store_page", store_id = salesperson.store.pk)
     
 def store_page(request, store_id):
     user = request.user
-    if user.has_perm("ap.region_manager"):
-        salesperson = Salesperson.objects.get(pk = user.id)
-        store= Store.objects.filter(pk = store_id)
-        inventories = Inventory.objects.filter(store = store)
+    if user.has_perm("app.associate"):
+        
+        if request.method == "POST":
+            form = storeForm(request.POST)
+            if form.is_valid():
+                changed_item = Inventory.objects.get(pk = form.cleaned_data["product_id"])
+                changed_item.quantity = form.cleaned_data["quantity"]
+                changed_item.save()
+
+        store= Store.objects.filter(id = store_id)
+        inventories = Inventory.objects.filter(store__id = store_id)
         return render(request, 'store.html', {'store':store, 'inventories':inventories})
     
 

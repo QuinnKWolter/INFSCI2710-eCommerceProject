@@ -12,6 +12,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.new_user, name='new_user'),
     path('accounts/register_company/', views.new_company, name='new_company'),
+    path('accounts/register_employee/', views.new_employee, name='new_employee'),
+    path('accounts/register_manager/', views.new_manager, name='new_manager'),
 
     # Product and Category URLs
     path('products/', views.product_list, name='product_list'),
@@ -41,6 +43,7 @@ urlpatterns = [
     # Salesperson Interface URLs
     path('sales/dashboard/', views.sales_dashboard, name='sales_dashboard'),
     path('stores/', views.store_list, name='store_list'),
+    path('stores/redirect', views.store_redirect, name='store_redirect'),
     path('stores/<int:store_id>/', views.store_page, name='store_page'),
 
     # Store and Inventory Management URLs
