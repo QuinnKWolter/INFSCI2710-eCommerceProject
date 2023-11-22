@@ -7,61 +7,53 @@ INFSCI2710 eCommerce Project
 🟦 = Done & Pretty
 
 ## Anticipated Interfaces
-1. :yellow_square:**Home Page**
-   - Top Products
-     - Search functionality built in?
+1. :green_square:**Home Page**
 2. :yellow_square:**Categories List**
-3. :yellow_square:**Specific Category Page**
-   - Table of products for this category
-   - Search functionality
-4. :yellow_square:**About Page / Contact Us**
-5. :yellow_square:**Cart Structure**
-6. :yellow_square:**Sales Interface**
+3. :green_square:**Specific Category Page**
+4. :green_square:**About Page / Contact Us**
+5. :green_square:**Cart Structure**
+6. :green_square:**Sales Interface**
 7. :yellow_square:**Payment Interface**
 8. :red_square:**New Inventory**
-9. :yellow_square:**New User Registration Interface**
+9. :green_square:**New User Registration Interface**
 10. :yellow_square:**Transaction Summary Interface**
   - The system must provide data aggregation queries:
     - What are the aggregate sales and profit of the products.
-      - Aggregation of the "Transaction" objects by Product?
     - What are the top product categories.
-      - Aggregation of "Transaction" objects by Category?
     - How do the various regions compare by sales volume?
-      - Inventories..... something something?
     - Which businesses are buying given products the most?
-      - All transactions where customer "Type" == "Business", sorted
     - Other interesting aggregate queries that you will come up with.
-      - Will make up as we go
+    -    Demographic dashboard
+    -    Salesperson report
 
 ## ACTION ITEMS
 ### Kishor:
-1. :yellow_square:Scripts for Products, Categories, Transactions, Reviews, Customers.
-2. :yellow_square:Figure out stock/inventories/support structure in models.py with Logan for reports?
-3. :red_square:[Generate Database Diagram/ERD with Django Extensions](https://www.linkedin.com/pulse/generate-database-diagramerd-django-extensions-automatically-srujan-s/)
-4. 🟩Scripts for Salespersons, Stores, and Regions from Rody.
-5. 🟥Look at base.html and do any prettification/styling that you'd like.
-6. 🟥Check and fill in your respective portions of the shared report Google Doc.
+1. 🟨Populate your sections of the report.
+2. 🟥Finalization of models.py, removing descriptions fields, adding choice parameters, adding images to categories.
+3. 🟥Finalize scripts to randomize transactions and reviews a bit more.
+4. 🟥Generate the ERDs for the final report AFTER making all changes to models.py.
 
 ### Rody:
-1. :yellow_square:Data/Script for Regions, Stores, Salespersons.
-2. :red_square:Very Basic Simple Product Widget.
-3. :red_square:Create a Google Doc skeleton for the report.
-   - Share with us.
-4. :red_square:Mock up a home page.
-   - Just copy and paste your widget a few times with different images/titles/prices.
-5. 🟥Check and fill in your respective portions of the shared report Google Doc.
+1. 🟥Populate the about page with our information.
+2. 🟥Make the about page pretty with Bootstrap 5 classes etc.
+3. 🟨Fill out your sections of the report after Kishor pushes final models.py changes
 
 ### Logan:
-1. :green_square:Checkout/Payment interfaces.
-2. :yellow_square:Work on models.py with Kishor to finalize transactions, carts, customers, etc.
-3. :green_square:More logic for cart, increase quantity rather than having multiple entries.
-4. 🟨Permissions for different user authorization levels.
-5. 🟥Check and fill in your respective portions of the shared report Google Doc.
+1. 🟥Make salesperson report based on regions report.
+2. 🟥Add $$$ to regions and salesperson reports.
+3. 🟥Make so that the product page's two forms do not have a validation clash on submit.
+4. 🟥Double check the "by business" report process.
+5. 🟥Make a frontend for adding new inventory to a given store.
+6. 🟩Make salesperson who conducted a sale be a select dropdown on checkout with name etc.
+7. 🟨Check and fill in your respective portions of the shared report Google Doc.
 
 ### Quinn:
-1. :yellow_square:Merge Logan's frontend work + Run Kishor's scripts
-2. :green_square:Products and Category Products in a DataTable
-3. :green_square:Media resources
-4. :yellow_square:Aggregation/Reporting dashboard
-5. 🟨Stripe integration.
-6. 🟥Check and fill in your respective portions of the shared report Google Doc.
+1. 🟨Stripe integration.
+2. 🟥Navbar GET parameter searching.
+3. 🟥Stars on product detail page and remove extra "store at" label.
+4. 🟥Dashboard report for demographic facets.
+5. 🟥Not all pages redirect to homepage.
+6. 🟥Make categories page pretty with images from Kishor.
+7. 🟥Make "My Store" prettier
+8. 🟥Do a general aesthetic pass on all report pages, etc.
+9. 🟨Check and fill in your respective portions of the shared report Google Doc.
