@@ -7,26 +7,19 @@ INFSCI2710 eCommerce Project
 🟦 = Done & Pretty
 
 ## Anticipated Interfaces
-1. :red_square:**Home Page**
-   - Top Products?
+1. :yellow_square:**Home Page**
+   - Top Products
      - Search functionality built in?
 2. :yellow_square:**Categories List**
 3. :yellow_square:**Specific Category Page**
    - Table of products for this category
    - Search functionality
 4. :yellow_square:**About Page / Contact Us**
-   - Static page
 5. :yellow_square:**Cart Structure**
-   - On given pages that follows user around?
 6. :yellow_square:**Sales Interface**
-   - Shipping info? Quantities of products?
 7. :yellow_square:**Payment Interface**
-   - Enter some card details, hit "Checkout"
 8. :red_square:**New Inventory**
-   - Add Stock quantities to Regions, indicate Manager ordering?
-     - PERFORMED THROUGH DJANGO ADMIN
 9. :yellow_square:**New User Registration Interface**
-   - Conditional Logic for Home vs. Business
 10. :yellow_square:**Transaction Summary Interface**
   - The system must provide data aggregation queries:
     - What are the aggregate sales and profit of the products.
@@ -70,5 +63,5 @@ INFSCI2710 eCommerce Project
 2. :green_square:Products and Category Products in a DataTable
 3. :green_square:Media resources
 4. :yellow_square:Aggregation/Reporting dashboard
-5. 🟥Stripe integration.
+5. 🟨Stripe integration.
 6. 🟥Check and fill in your respective portions of the shared report Google Doc.
