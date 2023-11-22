@@ -8,7 +8,7 @@ from django.contrib.auth.models import Permission
 # Category Model
 class Category(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
+    # description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -24,7 +24,7 @@ class Category(models.Model):
 # quick note for aggregation 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    # description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.PROTECT)
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
@@ -145,8 +145,8 @@ class Customer(User):
     kind = models.CharField(max_length=20, choices=[('Home', 'Home'), ('Business', 'Business'),('Manager', 'Manager'),('Region_Manager', 'Region_Manager'), ('Associate', 'Associate'), ('Admin', 'Admin')])
     # Fields for 'Home'
     ## should probably change marital_status and gender to choices
-    marital_status = models.CharField(max_length=10, blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
+    marital_status = models.CharField(max_length=10, blank=True, null=True, choices=[('Married', 'Married'), ('Single', 'Single')])
+    gender = models.CharField(max_length=10, blank=True, null=True, choices = [('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     age = models.IntegerField(blank=True, null=True)
     income = models.IntegerField(blank=True, null=True)
     # Fields for 'Business' kind users
@@ -181,7 +181,7 @@ class Transaction(models.Model):
         ('Pending', 'Pending'),
         ('Processing', 'Processing'),
         ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
+        ('Delivered', 'Delivered')
     )
     
     customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.CASCADE)

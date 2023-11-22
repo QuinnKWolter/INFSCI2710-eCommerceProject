@@ -1,5 +1,6 @@
 import pandas 
 from app.models import Product, Category, Review, Customer
+import os
 
 electronics = pandas.read_csv('electronics.csv')
 reviews = pandas.read_csv('reviews.csv')
@@ -11,7 +12,7 @@ for row in electronics.itertuples():
         price = row.price,
         # stock = 10,
         category = Category.objects.get(pk = row.category_id),
-        image = 'product_images/' + row.imgUrl.split('/')[-1]
+        image = os.path.join('product_images/', row.imgUrl.split('/')[-1])
     )
     prod.save()
     subset = reviews[reviews["asin"] == row.asin]
@@ -23,5 +24,5 @@ for row in electronics.itertuples():
         product = prod,
         rating = int(row2.overall),
         comment = row2.reviewText
-    )
-    rev.save()
+        )
+        rev.save()

@@ -9,6 +9,7 @@ perm = Permission.objects.get(codename='region_manager')
 salespersons = Salesperson.objects.filter(~Q(user_permissions = perm)) #salesperson
 reviews = Review.objects.all() #review
 reviews_data = pandas.read_csv('reviews.csv')
+products = Product.objects.all()
 
 for review in reviews:
     prod = review.product
@@ -18,13 +19,17 @@ for review in reviews:
         reviews_data['EMAIL'] == cust.email
     ].iloc[0]['unixReviewTime']
     # print(timestamp)
+    all_prods = random.sample(list(products), k = random.randint(1,5))
+    all_prods.append(prod)
+
+    
 
     transaction = Transaction(
         customer = cust,
         salesperson = sp,
         date_ordered = datetime.datetime.fromtimestamp(timestamp),
         status = 'Delivered',
-        total_price = prod.price,
+        # total_price = prod.price,
         shipping_address = cust.street_address,
         city = cust.city,
         state = cust.state,
@@ -33,11 +38,21 @@ for review in reviews:
     transaction.save()
     # print(transaction.salesperson.store)
     # print(prod)
+    total = 0
+    for prods in all_prods:
+        qty = random.randint(1,3)
+        prc = prod.price * qty
+        transaction_item = TransactionItem(
+            transaction = transaction,
+            inventory = Inventory.objects.get(store = transaction.salesperson.store, product = prod),
+            quantity = qty,
+            price = prc
+        )
+        total += prc
+        transaction_item.save()
+    
+    transaction.total_price = total
+    transaction.save()
 
-    transaction_item = TransactionItem(
-        transaction = transaction,
-        inventory = Inventory.objects.get(store = transaction.salesperson.store, product = prod),
-        quantity = 1,
-        price = prod.price
-    )
-    transaction_item.save()
+    
+
