@@ -2,21 +2,21 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Region Sales Report</h1>
+    <h1>Salesperson Sales Report</h1>
     <table id="categoryTable" class="table table-striped" style="width:100%">
         <thead>
             <tr>
-                <th>Region Name</th>
-                <th>Total Sales</th>
+                <th>Name</th>
+                <th>Total products sold</th>
                 <th>Profit</th>
             </tr>
         </thead>
         <tbody>
-            {% for region in regions %}
+            {% for person in salespeople %}
             <tr>
-                <td>{{ region.name }}</td>
-                <td>{{ region.sales_volume }}</td>
-                <td>${{ region.profit }}</td>
+                <td>{{ person.name }}</td>
+                <td>{{ person.sales_volume }}</td>
+                <td>${{ person.profit }}</td>
             </tr>
             {% endfor %}
         </tbody>
