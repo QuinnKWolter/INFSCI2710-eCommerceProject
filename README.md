@@ -29,8 +29,8 @@ INFSCI2710 eCommerce Project
 ## ACTION ITEMS
 ### Kishor:
 1. 🟨Populate your sections of the report.
-2. 🟥Finalization of models.py, removing descriptions fields, adding choice parameters, adding images to categories.
-3. 🟥Finalize scripts to randomize transactions and reviews a bit more.
+2. 🟩Finalization of models.py, removing descriptions fields, adding choice parameters, adding images to categories.
+3. 🟨Finalize scripts to randomize transactions and reviews a bit more.
 4. 🟥Generate the ERDs for the final report AFTER making all changes to models.py.
 
 ### Rody:
@@ -49,11 +49,11 @@ INFSCI2710 eCommerce Project
 
 ### Quinn:
 1. 🟨Stripe integration.
-2. 🟥Navbar GET parameter searching.
-3. 🟥Stars on product detail page and remove extra "store at" label.
+2. 🟩Navbar GET parameter searching.
+3. 🟩Stars on product detail page and remove extra "store at" label.
 4. 🟥Dashboard report for demographic facets.
 5. 🟥Not all pages redirect to homepage.
-6. 🟥Make categories page pretty with images from Kishor.
-7. 🟥Make "My Store" prettier
-8. 🟥Do a general aesthetic pass on all report pages, etc.
+6. 🟩Make categories page pretty with images from Kishor.
+7. 🟨Make "My Store" prettier
+8. 🟨Do a general aesthetic pass on all report pages, etc.
 9. 🟨Check and fill in your respective portions of the shared report Google Doc.
