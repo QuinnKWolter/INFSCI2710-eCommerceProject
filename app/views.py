@@ -66,6 +66,7 @@ def login_view(request):
             return redirect('index')
         else:
             # Optionally, add an error message
+            print('user is none')
             pass
     return render(request, 'login.html')
 

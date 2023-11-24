@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 import pandas
 from app.models import Customer
 from django.contrib.auth.models import User
-
+from django.contrib.auth.hashers import make_password
 customers = pandas.read_csv('users.csv')
 
 for i,row in enumerate(customers.itertuples()):
@@ -40,7 +40,7 @@ for i,row in enumerate(customers.itertuples()):
         cust.business_category = row.BUSINESS_CATEGORIES
         cust.annual_income = 10000
     else:
-        cust.marital_status = row.MARITAL_STATUS
+        cust.marital_status = 'Married' if row.MARITAL_STATUS else 'Single'
         cust.gender = 'Female' if row.ISFEMALE == False else 'Male'
         cust.age = row.AGE
     cust.save()
