@@ -10,14 +10,15 @@
                 <th>Name</th>
                 <th>Stock</th>
                 <th>Rating</th>
+                <th>Price</th>
             </tr>
         </thead>
         <tbody>
             {% for product in products_list %}
             <tr>
-                <td>
+                <td class="text-center">
                     {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-card">
                     {% else %}
                     <p>No image available</p>
                     {% endif %}
@@ -31,6 +32,9 @@
                 <td class="text-nowrap text-warning">
                     <div class="d-none">{{ product.avg_rating }}</div>
                     {% rating_stars product.avg_rating %}
+                </td>
+                <td>
+                    ${{ product.price }}
                 </td>                
             </tr>
             {% endfor %}

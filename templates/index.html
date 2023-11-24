@@ -36,9 +36,9 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for product in top_products %}
                 <div class="col">
-                    <div class="card h-100">
+                    <div class="card d-flex flex-column h-100 product-card">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
@@ -47,7 +47,7 @@
                             <p class="card-text"><small class="text-muted">In Stock: {{ product.total_stock }}</small></p>
                             <p class="card-text"><small class="text-muted text-warning text-nowrap">Average Rating: {% rating_stars product.avg_rating %}</small></p>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer mt-auto">
                             <small class="text-muted">Total Sold: {{ product.total_sold }}</small>
                         </div>
                     </div>
@@ -56,5 +56,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

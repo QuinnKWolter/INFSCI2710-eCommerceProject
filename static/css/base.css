@@ -1,5 +1,19 @@
-.category-card:hover {
+.category-card:hover, .product-card:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease-in-out;
+    
+}
+
+.card {
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+  
+.category-card:hover .card-img-top, .product-card:hover .card-img-top {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+    z-index: 2;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+  

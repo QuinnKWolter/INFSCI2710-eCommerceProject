@@ -11,6 +11,7 @@
                 <th>Name</th>
                 <th>Stock</th>
                 <th>Rating</th>
+                <th>Price</th>
             </tr>
         </thead>
         <tbody>
@@ -33,7 +34,10 @@
                 <td class="text-nowrap text-warning">
                     <div class="d-none">{{ product.avg_rating }}</div>
                     {% rating_stars product.avg_rating %}
-                </td> 
+                </td>
+                <td>
+                    ${{ product.price }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

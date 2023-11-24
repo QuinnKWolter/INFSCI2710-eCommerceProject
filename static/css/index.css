@@ -39,3 +39,9 @@
 .hero-section .lead {
     color: #333;
 }
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: scale-down;
+}
