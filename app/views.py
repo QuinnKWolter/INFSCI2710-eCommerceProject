@@ -327,7 +327,7 @@ def new_company(request):
         form = newCompany(request.POST)
         if form.is_valid():
             temp= form.save(commit=False)
-            temp.kind ="Company"
+            temp.kind ="Business"
             temp.save()
             return HttpResponseRedirect("/")
     # if a GET (or any other method) we'll create a blank form
@@ -792,9 +792,31 @@ def store_page(request, store_id):
                 changed_item.quantity = form.cleaned_data["quantity"]
                 changed_item.save()
 
-        store= Store.objects.filter(id = store_id)
+        store= Store.objects.get(id = store_id)
         inventories = Inventory.objects.filter(store__id = store_id)
         return render(request, 'store.html', {'store':store, 'inventories':inventories})
+    
+def add_inventory(request, store_id):
+    user = request.user
+    if user.has_perm("app.manager"):
+        if request.method == "POST":
+            form = newInventory(request.POST)
+            if form.is_valid():
+                temp = form.save(commit=False)
+                
+                temp.store = Store.objects.get(id = store_id)
+                inventories = Inventory.objects.filter(store = temp.store ).filter(product=temp.product)
+                if len(inventories) > 0:
+                    inv = Inventory.objects.filter(store = temp.store ).get(product=temp.product)
+                    inv.quantity = inv.quantity + temp.quantity
+                    inv.save()
+                else:
+                    temp.save()
+                return redirect(store_page, store_id=store_id)
+        else:
+            form = newInventory()
+        return render (request, "add_inventory.html", {"form":form})
+    
     
 
 # Helper objects and functions for AJAX functionality

@@ -24,6 +24,12 @@ class newManager(UserCreationForm):
         model = Salesperson
         fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","job_title","store","salary", 'password1', 'password2')
 
+
+class newInventory(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ("product", "quantity")
+
 class addCart(forms.ModelForm):
     def __init__(self, inventory, customer, *args, **kwargs):
         self.customer = customer
