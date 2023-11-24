@@ -138,11 +138,10 @@ class CheckoutForm(forms.Form):
         max_length=10,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    assisting_salesperson_id = forms.CharField(
-        label='Assisting salesperson id',
-        max_length=10,
-        required= False,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+    assisting_salesperson_id = forms.ModelChoiceField(
+        label='Assisting salesperson',
+        queryset=Salesperson.objects.all(),
+        required=False
     )
 
 

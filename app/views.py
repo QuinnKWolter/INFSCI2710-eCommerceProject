@@ -541,8 +541,7 @@ def checkout(request):
                                                 zipcode = form.cleaned_data['shipping_zipcode'])
                 salesperson = form.cleaned_data['assisting_salesperson_id']
                 if salesperson:
-                    if len(Salesperson.objects.filter(pk = salesperson)) > 0:
-                        new_transaction.salesperson = Salesperson.objects.get(pk = salesperson)
+                    new_transaction.salesperson = salesperson
                 new_transaction.save()
                 for item in checkout_cart:
                     subtotal = (item.quantity * item.inventory.product.price)
@@ -688,6 +687,11 @@ def region_report(request):
     if user.has_perm("app.associate"):
         regions = Region.objects.all()
         return render(request, 'report_region.html', {'regions':regions})
+def salesperson_report(request):
+    user = request.user
+    if user.has_perm("app.associate"):
+        salespeople = Salesperson.objects.all()
+        return render(request, 'report_salesperson.html', {'salespeople':salespeople})
     
     
 def business_product_report_search(request):

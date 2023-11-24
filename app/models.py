@@ -167,6 +167,20 @@ class Salesperson(Customer):
 
     def __str__(self):
         return self.name
+    def profit(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(transaction__salesperson = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("price"))
+            total = w["total"]
+        return round(total,2)
+    def sales_volume(self):
+        total = 0
+        transactions = TransactionItem.objects.filter(transaction__salesperson = self)
+        if len(transactions) > 0:
+            w = transactions.aggregate(total = Sum("quantity"))
+            total = w["total"]
+        return total
 
     class Meta:
         # admins will have is_staff checked off and get all perms
