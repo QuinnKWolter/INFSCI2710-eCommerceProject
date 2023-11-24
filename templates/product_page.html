@@ -21,8 +21,7 @@
             <h2>{{ product.name }}</h2>
             <p>{{ product.description }}</p>
             <p>Price: ${{ product.price }}</p>
-            <p>Average rating {{ product.avg_rating }}</p>
-            <p>store at {{ product.store.address}}</p>
+            <p>Average rating <span class="text-warning">{% rating_stars product.avg_rating %}</span></p>
             <!-- Stock Information -->
             {% if product.total_stock == 0 %}
             <p class="text-danger">Sold Out</p>

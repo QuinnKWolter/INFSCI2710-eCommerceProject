@@ -46,6 +46,21 @@
             {'targets': [3], 'width': '75px'},
             ]
         });
+
+        var urlParams = new URLSearchParams(window.location.search);
+        var searchQuery = urlParams.get('q');
+
+        if (searchQuery) {
+            // Find the DataTable search input using jQuery
+            var dataTableInput = $('#productsTable_filter').find('input[type="search"]');
+
+            if (dataTableInput.length) {
+                dataTableInput.val(searchQuery);
+
+                // Trigger the search in DataTable
+                $('#productsTable').DataTable().search(searchQuery).draw();
+            }
+        }
     });
 </script>
 {% endblock %}

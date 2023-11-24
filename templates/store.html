@@ -19,6 +19,7 @@
                 {% empty %}
                 <div class="list-group-item">This store has no products</div>
                 {% endfor %}
+                <a href="{% url 'add_inventory' store.id %}">Add inventory</a>
             </div>
             
         </div>

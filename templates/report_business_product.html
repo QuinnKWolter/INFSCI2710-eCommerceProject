@@ -15,8 +15,8 @@
             {% for business in businesses %}
             <tr>
                 <td>{{ business.name }}</td>
-                <td>{{ business.id.description }}</td>
-                <td>${{ business.amount_purchased }}</td>
+                <td>{{ business.id }}</td>
+                <td>{{ business.amount_purchased }}</td>
             </tr>
             {% endfor %}
         </tbody>
