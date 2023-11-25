@@ -817,7 +817,17 @@ def add_inventory(request, store_id):
             form = newInventory()
         return render (request, "add_inventory.html", {"form":form})
     
-    
+def new_product(request):
+    user = request.user
+    if user.has_perm("app.region_manager"):    
+        if request.method == "POST":
+            form = newProduct(request.POST)
+            if form.is_valid():
+                form.save()
+            return redirect("/")
+        else:
+            form = newProduct()
+        return render(request, "new_product.html", {"form":form})
 
 # Helper objects and functions for AJAX functionality
 switch = {

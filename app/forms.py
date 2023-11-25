@@ -30,6 +30,11 @@ class newInventory(forms.ModelForm):
         model = Inventory
         fields = ("product", "quantity")
 
+class newProduct(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ("name", "description", "price", "category", "image")
+
 class addCart(forms.ModelForm):
     def __init__(self, inventory, customer, *args, **kwargs):
         self.customer = customer

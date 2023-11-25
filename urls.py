@@ -20,6 +20,7 @@ urlpatterns = [
     path('products/<int:product_id>/', views.product_page, name='product_page'),
     path('categories/', views.categories, name='categories'),
     path('categories/<int:category_id>/', views.category_products, name='category_products'),
+    path('new_product/', views.new_product, name='new_product'),
     
     # Search urls
     path('search/', views.search, name='search'),
