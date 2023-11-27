@@ -18,17 +18,22 @@ class newCompany(UserCreationForm):
 class newAssociate(UserCreationForm):
     class Meta:
         model = Salesperson
-        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","job_title","store","salary", 'password1', 'password2')
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","job_title","store","salary", 'password1', 'password2')
 class newManager(UserCreationForm):
     class Meta:
         model = Salesperson
-        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income","job_title","store","salary", 'password1', 'password2')
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","job_title","store","salary", 'password1', 'password2')
 
 
 class newInventory(forms.ModelForm):
     class Meta:
         model = Inventory
         fields = ("product", "quantity")
+
+class newProduct(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ("name", "description", "price", "category", "image")
 
 class addCart(forms.ModelForm):
     def __init__(self, inventory, customer, *args, **kwargs):
@@ -40,7 +45,7 @@ class addCart(forms.ModelForm):
         model = CartItem
         fields = ("quantity","inventory")
 
-    
+
 class confirmAdd(forms.ModelForm):
     class Meta:
         model = CartItem
@@ -240,5 +245,16 @@ class SearchForm(forms.Form):
         required=False
     )
     
-    
+class updateCustomer(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","income")
+class updateCompany(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","business_category","annual_income")
+class updateSalesperson(forms.ModelForm):
+    class Meta:
+        model = Salesperson
+        fields = ('username', 'email',"name","phone_number","street_address","city","state","zip_code","marital_status","gender","age","salary")
 # management forms

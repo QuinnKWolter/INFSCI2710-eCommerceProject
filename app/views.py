@@ -12,12 +12,15 @@ from django.http import (
     HttpResponseServerError,
     JsonResponse
 )
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseServerError,
     JsonResponse
 )
+from django.contrib.auth import update_session_auth_hash
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -143,6 +146,50 @@ def search(request):
         form = SearchForm()
     return render(request, 'search.html', {'form': form})
 
+def update_profile(request):
+    user = request.user
+    if (user.is_authenticated):
+        if(user.has_perm("app.associate")):
+            salesperson = Salesperson.objects.get(pk = user.id)
+            if request.method == 'POST':
+                form = updateSalesperson(request.Post, instance = salesperson)
+                if form.is_valid():
+                    form.save()
+            form2 = updateSalesperson(instance = salesperson)
+            return render (request, "account.html", {'form': form2})
+        else:
+            customer = Customer.objects.get(pk = user.id)
+            if request.method == 'POST':
+                form = updateCustomer(request.Post, instance = customer)
+                if form.is_valid():
+                    form.save()
+            if customer.kind == "Home":
+                form2 = updateCustomer(instance = customer)
+            else: 
+                form2 = updateCompany(instance = customer)
+            return render (request, "account.html", {'form': form2})
+        
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('update_profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {
+        'form': form
+    })
+
+def delete_profile(request):
+    user = request.user
+    if (user.is_authenticated):
+        user.delete()
+        return redirect("/")
 
 def remove_from_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -818,7 +865,17 @@ def add_inventory(request, store_id):
             form = newInventory()
         return render (request, "add_inventory.html", {"form":form})
     
-    
+def new_product(request):
+    user = request.user
+    if user.has_perm("app.region_manager"):    
+        if request.method == "POST":
+            form = newProduct(request.POST)
+            if form.is_valid():
+                form.save()
+            return redirect("/")
+        else:
+            form = newProduct()
+        return render(request, "new_product.html", {"form":form})
 
 # Helper objects and functions for AJAX functionality
 switch = {

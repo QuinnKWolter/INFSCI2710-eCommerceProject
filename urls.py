@@ -14,12 +14,16 @@ urlpatterns = [
     path('accounts/register_company/', views.new_company, name='new_company'),
     path('accounts/register_employee/', views.new_employee, name='new_employee'),
     path('accounts/register_manager/', views.new_manager, name='new_manager'),
+    path('accounts/details/', views.update_profile, name='update_profile'),
+    path('accounts/delete/', views.delete_profile, name='delete_profile'),
+    path ('accounts/change_password', views.change_password, name='change_password'),
 
     # Product and Category URLs
     path('products/', views.product_list, name='product_list'),
     path('products/<int:product_id>/', views.product_page, name='product_page'),
     path('categories/', views.categories, name='categories'),
     path('categories/<int:category_id>/', views.category_products, name='category_products'),
+    path('new_product/', views.new_product, name='new_product'),
     
     # Search urls
     path('search/', views.search, name='search'),
