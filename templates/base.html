@@ -40,6 +40,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categories</a></li>
                     <!-- User Authentication Links -->
                     {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'update_profile' %}">Account</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="bi bi-cart"></i> Cart</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'transaction_history' %}">Transactions</a></li>

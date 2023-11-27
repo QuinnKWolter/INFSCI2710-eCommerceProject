@@ -198,7 +198,7 @@ class Transaction(models.Model):
         ('Delivered', 'Delivered'),
     )
     
-    customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.SET_NULL, null = True)
     salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')

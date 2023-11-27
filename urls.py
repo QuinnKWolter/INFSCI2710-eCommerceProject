@@ -14,6 +14,9 @@ urlpatterns = [
     path('accounts/register_company/', views.new_company, name='new_company'),
     path('accounts/register_employee/', views.new_employee, name='new_employee'),
     path('accounts/register_manager/', views.new_manager, name='new_manager'),
+    path('accounts/details/', views.update_profile, name='update_profile'),
+    path('accounts/delete/', views.delete_profile, name='delete_profile'),
+    path ('accounts/change_password', views.change_password, name='change_password'),
 
     # Product and Category URLs
     path('products/', views.product_list, name='product_list'),
