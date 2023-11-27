@@ -3,58 +3,129 @@
 
 {% block title %}About Us{% endblock %}
 
-{% block load_css %}
-<!-- Add any specific CSS links for About page here if needed -->
-{% endblock %}
-
-{% block load_js %}
-<!-- Add any specific JavaScript links for About page here if needed -->
-{% endblock %}
-
 {% block content %}
-<div class="container">
+<div class="container my-5">
+    <div class="text-center mb-4">
+        <h2>Our Story</h2>
+    </div>
+
     <div class="row">
-        <div class="col-md-12">
-            <h2 class="mb-4">About Us</h2>
-            <div class="about-page">
+        <div class="col-lg-12">
+            <div>
                 <h3>Company Mission:</h3>
-                <p>Your best stop for quality goods</p>
-                <p>Here at Company X, we provide high-grade products at affordable costs to add value to your lives. 
-                We are dedicated to customer satisfaction by offering a wide range of well-designed, functional 
-                electronics. These essential items help our customers achieve their aspirations inspiring the builders of tomorrow.</p>
-            </div>
-
-            <div class="contact">
-                <h2>Employees:</h2>
-
-                <h3>Sales Manager</h3>
-                <h4>Charles Rossum</h4>
-                <p>About me: Started as a sales rep and worked my way up to Manager.</p>
-                <p>Number: 412-456-8769</p>
-                <p>E-mail: <a href="mailto:Rossum@X.com">Rossum@X.com</a></p>
-                <button class="btn btn-primary">Contact</button><br><br>
-
-                <h3>Advertising Manager</h3>
-                <h4>Brendan Gosling</h4>
-                <p>About me: Transferred from Amazon to head the Advertising department.</p>
-                <p>Number: 412-253-9302</p>
-                <p>E-mail: <a href="mailto:Gosling@X.com">Gosling@X.com</a></p>
-                <button class="btn btn-primary">Contact</button><br><br>
-
-                <h3>Risk Manager</h3>
-                <h4>Tim Lie</h4>
-                <p>About me: Mitigates company budgeting.</p>
-                <p>Number: 412-267-1754</p>
-                <p>E-mail: <a href="mailto:Lie@X.com">Lie@X.com</a></p>
-                <button class="btn btn-primary">Contact</button><br><br>
-
-                <h3>Hours</h3>
-                <h4>Monday-Friday: 9:00am - 5:00pm</h4>
-                <p>Front Desk Number: 412-753-2651</p>
-                <p>E-mail: <a href="mailto:Front_desk@X.com">Front_desk@X.com</a></p>
-                <button class="btn btn-primary">Call</button><br><br>
+                <p>Here at CircuitSeeker, we provide high-grade products at affordable costs to add value to your lives. We are dedicated to customer satisfaction by offering a wide range of well-designed, functional electronics. These essential items help our customers achieve their aspirations inspiring the builders of tomorrow.</p>
             </div>
         </div>
+    </div>
+
+    <section class="my-4">
+        <h3>Our Values</h3>
+        <ul>
+            <li><strong>Quality:</strong> We are committed to delivering the highest quality products/services.</li>
+            <li><strong>Customer-Centric:</strong> Our customers are at the heart of everything we do.</li>
+            <li><strong>Innovation:</strong> We embrace creativity and strive for continuous improvement.</li>
+            <li><strong>Community:</strong> We believe in giving back and supporting our community.</li>
+        </ul>
+    </section>
+
+    <div class="my-4">
+        <h2>Employees:</h2>
+        <div class="row">
+            <!-- Employee Card for Quinn Wolter -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Quinn Wolter</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">Project Manager</h3>
+                        <p class="card-text">Lead developer of eCommerce market and integrated frontend/backend components.</p>
+                        <p class="card-text">Number: 123-555-1234</p>
+                        <p class="card-text">E-mail: <a href="mailto:Wolter@CircuitSeeker.com">Wolter@CircuitSeeker.com</a></p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Employee Card for Abhigyan Kishor -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Abhigyan Kishor</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">Data Analyst</h3>
+                        <p class="card-text">Developed automation of the eCommerce site. Analyzed website performance.</p>
+                        <p class="card-text">Number: 123-555-1234</p>
+                        <p class="card-text">E-mail: <a href="mailto:Kishor@CircuitSeeker.com">Kishor@CircuitSeeker.com</a></p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Employee Card for Logan Lee -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Logan Lee</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">Data Engineer</h3>
+                        <p class="card-text">Developed backend components and scripted checkout and reporting user interfaces.</p>
+                        <p class="card-text">Number: 123-555-1234</p>
+                        <p class="card-text">E-mail: <a href="mailto:Lee@CircuitSeeker.com">Lee@CircuitSeeker.com</a></p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Employee Card for Rody Kingston -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Rody Kingston</h2>
+                        <h3 class="card-subtitle mb-2 text-muted">Product Manager</h3>
+                        <p class="card-text">Provided database information and helped with scripts & frontend development.</p>
+                        <p class="card-text">Number: 123-555-1234</p>
+                        <p class="card-text">E-mail: <a href="mailto:Kingston@CircuitSeeker.com">Kingston@CircuitSeeker.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+   <div class="text-center my-4">
+        <h2>Fast Facts:</h2>
+    </div>
+    <div class="row">
+        <!-- Fast Fact Box: $500K in Revenue -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">$500K</h2>
+                    <h3 class="card-subtitle mb-2 text-muted">in revenue, 2023</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fast Fact Box: 45+ Brands -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">45+</h2>
+                    <h3 class="card-subtitle mb-2 text-muted">different household brands</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fast Fact Box: 15 Locations -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">15</h2>
+                    <h3 class="card-subtitle mb-2 text-muted"> locations across PA, OH, NJ</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center my-4">
+        <h3>Hours</h3>
+        <h4>Monday-Friday: 9:00am - 5:00pm</h4>
+        <p>Front Desk Number: 123-555-1234</p>
+        <p>E-mail: <a href="mailto:email@example.com">email@example.com</a></p>
+        <button class="btn btn-primary" onclick="window.open('tel:xxx-xxx-xxxx');">Contact</button>
     </div>
 </div>
 {% endblock %}
