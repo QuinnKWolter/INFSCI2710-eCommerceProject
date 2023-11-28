@@ -8,6 +8,7 @@
                 <th>Address</th>
                 <th>Manager</th>
                 <th>Profit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,9 @@
                 </td>
                 <td>
                     {{ store.profit }}
+                </td>
+                <td>
+                    <a href="{% url 'delete_store' store.id %}">Delete</a>
                 </td>
             </tr>
             {% endfor %}

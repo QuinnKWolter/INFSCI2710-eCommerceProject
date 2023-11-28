@@ -15,6 +15,7 @@
                         <input type="hidden" id="product_id" name="product_id" value="{{ inventory.id }}">
                         <button type="submit" class="btn btn-info btn-sm me-2">Update</button>
                     </form>
+                    <a href="{% url 'delete_inventory' inventory.id %}" class="btn btn-outline-danger btn-sm mt-2">Delete</a>
                 </div>
                 {% empty %}
                 <div class="list-group-item">This store has no products</div>
