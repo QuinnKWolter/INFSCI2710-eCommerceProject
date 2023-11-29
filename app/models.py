@@ -8,10 +8,12 @@ from django.contrib.auth.models import Permission
 # Category Model
 class Category(models.Model):
     name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='category_images/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
+
     def profit(self):
         profit = 0
         products = Product.objects.filter(category = self)
@@ -49,6 +51,7 @@ class Product(models.Model):
         for item in items:
             stock = stock + item.quantity
         return stock
+
     def total_sold(self):
         total = 0
         transactions = TransactionItem.objects.filter(inventory__product = self)
@@ -56,31 +59,33 @@ class Product(models.Model):
             w = transactions.aggregate(total = Sum("quantity"))
             total = w["total"]
         return total
+
     def total_profit(self):
         total = 0
         transactions = TransactionItem.objects.filter(inventory__product = self)
         if len(transactions) > 0:
             w = transactions.aggregate(total = Sum("price"))
             total = w["total"]
-        return round(total,2)
+        return round(total, 2)
+
     def product_purchases(self, product):
         transactions = TransactionItem.objects.filter(inventory__product = self).filter(transaction__customer = self)
         if len(transactions) > 0:
             w = transactions.aggregate(total = Sum("quantity"))
             total = w["total"]
         return total
+    
     def no_inventory(self):
         inventories = Inventory.objects.filter(product = self)
         if len(inventories)> 0:
             return False
         else:
             return True
-        
-        
+              
 # inventory model
 class Inventory(models.Model):
-    store = models.ForeignKey("Store", related_name='inventory_items', on_delete=models.CASCADE)
-    product = models.ForeignKey("Product", related_name='inventory_items', on_delete=models.CASCADE)
+    store = models.ForeignKey("Store", related_name='inventory_items', null=True, blank=True, on_delete=models.CASCADE)
+    product = models.ForeignKey("Product", related_name='inventory_items', null=True, blank=True, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     class Meta:
@@ -88,7 +93,6 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f'{self.product.name} ({self.quantity}) in {self.store}'
-
 
 # Store Model
 class Store(models.Model):
@@ -116,8 +120,6 @@ class Store(models.Model):
             total = w["total"]
         return total
 
-
-
 # Region Model
 class Region(models.Model):
     name = models.CharField(max_length=200)
@@ -137,8 +139,6 @@ class Region(models.Model):
         for store in stores:
             total = total + store.sales_volume()
         return total
-    
-
 
 # Customer Model
 class Customer(User):
@@ -147,12 +147,12 @@ class Customer(User):
     street_address = models.CharField(max_length=300, blank = True, null= True)
     city = models.CharField(max_length=100, blank = True, null= True)
     state = models.CharField(max_length=100,  blank = True, null= True)
-    zip_code = models.CharField(max_length=10, blank = True, null= True)
+    zip_code = models.CharField(max_length=10, blank = True, null= True, default = '12345')
     kind = models.CharField(max_length=20, choices=[('Home', 'Home'), ('Business', 'Business'),('Manager', 'Manager'),('Region_Manager', 'Region_Manager'), ('Associate', 'Associate'), ('Admin', 'Admin')])
     # Fields for 'Home'
     ## should probably change marital_status and gender to choices
-    marital_status = models.CharField(max_length=10, blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
+    marital_status = models.CharField(max_length=10, blank=True, null=True, choices=[('Married', 'Married'), ('Single', 'Single')])
+    gender = models.CharField(max_length=10, blank=True, null=True, choices = [('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     age = models.IntegerField(blank=True, null=True)
     income = models.IntegerField(blank=True, null=True)
     # Fields for 'Business' kind users
@@ -171,14 +171,16 @@ class Salesperson(Customer):
     region = models.ForeignKey('Region', related_name='region', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.username
+    
     def profit(self):
         total = 0
         transactions = TransactionItem.objects.filter(transaction__salesperson = self)
         if len(transactions) > 0:
             w = transactions.aggregate(total = Sum("price"))
             total = w["total"]
-        return round(total,2)
+        return round(total, 2)
+
     def sales_volume(self):
         total = 0
         transactions = TransactionItem.objects.filter(transaction__salesperson = self)
@@ -193,8 +195,7 @@ class Salesperson(Customer):
                       ("manager", "can change stock and list/delist products and delete them can also add associates"),
                        ( "region_manager","can view regional data and do things for the region can add stores and managers"),
                        )
-    def __str__(self):
-        return self.username
+    
     
 # Transaction Model
 class Transaction(models.Model):
@@ -202,18 +203,18 @@ class Transaction(models.Model):
         ('Pending', 'Pending'),
         ('Processing', 'Processing'),
         ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
+        ('Delivered', 'Delivered')
     )
     
-    customer = models.ForeignKey(Customer, related_name='customer_transactions', on_delete=models.SET_NULL, null = True)
-    salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(Customer, related_name='customer_transactions', null=True, blank=True, on_delete=models.SET_NULL)
+    salesperson = models.ForeignKey(Salesperson, related_name='sales_transactions', on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     shipping_address = models.CharField(max_length=200)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
-    zipcode = models.IntegerField()
+    zipcode = models.CharField(max_length = 10, null = True, blank = True, default = '12345')
 
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
@@ -229,36 +230,31 @@ class Transaction(models.Model):
         if cost < self.total_price:
             dif = self.total_price - cost
             return_text = return_text + " $" + str(dif) + " spent on deleted products"
-        return return_text     
-    def get_items_list(self):
-        items = TransactionItem.objects.filter(transaction = self)
-        return items   
-
-
+        return return_text   
 
 # OrderItem Model
 class TransactionItem(models.Model):
-    transaction = models.ForeignKey(Transaction, related_name='transaction', on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, related_name='transaction', null=True, blank=True, on_delete=models.SET_NULL)
     inventory = models.ForeignKey(Inventory, related_name='order_items', on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=15, decimal_places=2)
 
     def __str__(self):
-        return f'{self.product.name} ({self.quantity})'
+        return f'{self.inventory.product.name} ({self.quantity})'
 
 
 # Review Model
 class Review(models.Model):
-    customer = models.ForeignKey(Customer, related_name='reviews', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='reviews', null=True, blank=True, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='reviews', null=True, blank=True, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.CharField(max_length=1000)
 
 
 # CartItem Model
 class CartItem(models.Model):
-    customer = models.ForeignKey(Customer, related_name='items', on_delete=models.CASCADE)
-    inventory = models.ForeignKey(Inventory, related_name='cart_items', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, related_name='items', null=True, blank=True, on_delete=models.CASCADE)
+    inventory = models.ForeignKey(Inventory, related_name='cart_items', null=True, blank=True, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     def __str__(self):

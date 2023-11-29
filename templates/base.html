@@ -98,7 +98,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="userDropdown">
                             {% if user.is_authenticated %}
-                                <li class="nav-item"><a class="nav-link" href="{% url 'update_profile' %}">Account</a></li>
+                                <li><a class="dropdown-item" href="{% url 'update_profile' %}">Account</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>

@@ -151,7 +151,7 @@ def update_profile(request):
         if(user.has_perm("app.associate")):
             salesperson = Salesperson.objects.get(pk = user.id)
             if request.method == 'POST':
-                form = updateSalesperson(request.Post, instance = salesperson)
+                form = updateSalesperson(request.POST, instance = salesperson)
                 if form.is_valid():
                     form.save()
             form2 = updateSalesperson(instance = salesperson)
@@ -159,7 +159,7 @@ def update_profile(request):
         else:
             customer = Customer.objects.get(pk = user.id)
             if request.method == 'POST':
-                form = updateCustomer(request.Post, instance = customer)
+                form = updateCustomer(request.POST, instance = customer)
                 if form.is_valid():
                     form.save()
             if customer.kind == "Home":

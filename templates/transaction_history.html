@@ -7,7 +7,7 @@
             <tr>
                 <th>Order number</th>
                 {%if request.user.is_staff %}
-                    <th>customer</th>
+                    <th>Customer</th>
                     <th>customer id</th>
                 {%endif%}
                 <th>Date</th>
@@ -22,10 +22,9 @@
                 <td>
                     {{transaction.id}}
                 </td>
-                {%if request.user.is_staff %}
+                {% if request.user.is_staff %}
                 <td>
                     <a href="{% url 'transaction_history_customer' transaction.customer.pk %}">{{transaction.customer.username}}</a>
-                    
                 </td>
                 <td>
                     {{transaction.customer.pk}}

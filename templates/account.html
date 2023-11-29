@@ -9,8 +9,8 @@
         {{ form|crispy }}
         <button type="submit" class="btn btn-primary">Save changes</button>
     </form>
-    <a href="{% url 'change_password'%}">Change Password</a>
-    <a href="{% url 'delete_profile' %}">Delete Account</a>
-    
+    <br> 
+    <a href="{% url 'change_password'%}" class="btn btn-info" style="color:white;">Change Password</a>
+    <a href="{% url 'delete_profile' %}" class="btn btn-danger">Delete Account</a>   
 </div>
 {% endblock %}
