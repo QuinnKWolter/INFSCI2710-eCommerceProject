@@ -69,7 +69,6 @@ def login_view(request):
             return redirect('index')
         else:
             # Optionally, add an error message
-            print('user is none')
             pass
     return render(request, 'login.html')
 
@@ -588,7 +587,7 @@ def checkout(request):
                                                 zipcode = form.cleaned_data['shipping_zipcode'])
                 salesperson = form.cleaned_data['assisting_salesperson_id']
                 if salesperson:
-                    new_transaction.salesperson = salesperson
+                    new_transaction.salesperson = Salesperson.objects.get(username = salesperson)
                 new_transaction.save()
                 for item in checkout_cart:
                     subtotal = (item.quantity * item.inventory.product.price)

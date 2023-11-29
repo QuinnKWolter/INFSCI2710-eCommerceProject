@@ -38,12 +38,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Shop</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categories</a></li>
                     <!-- User Authentication Links -->
-                    {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'update_profile' %}">Account</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="bi bi-cart"></i> Cart</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'transaction_history' %}">Transactions</a></li>
-                    {% else %}
+                    {% if not user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
@@ -65,28 +60,27 @@
                             <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Management</a>
                             <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                 <!-- Management dropdown links -->
-                                    
-                                            {% if perms.app.region_manager %}
-                                                <li><a class="dropdown-item" href="{% url 'store_list' %}">List Stores</a></li>
-                                                <li><a class="dropdown-item" href="{% url 'new_product' %}">New Product</a></li>
-                                                {#<li><a class="dropdown-item" href="{% url 'add_store' %}">Add Store</a></li>#}
-                                                {#<li><a class="dropdown-item" href="{% url 'edit_stores' %}">Edit Stores</a></li>#}
-                                                <li><a class="dropdown-item" href="{% url 'new_manager' %}">Add Manager</a></li>
-                                                {#<li><a class="dropdown-item" href="{% url 'edit_managers' %}">Edit Managers</a></li>#}
-                                            {% endif %}
-                                            {% if perms.app.manager %}
-                                                <li><a class="dropdown-item" href="{% url 'store_redirect' %}">My store</a></li>
-                                                <li><a class="dropdown-item" href="{% url 'new_employee' %}">Add Associate</a></li>
-                                                {#<li><a class="dropdown-item" href="{% url 'add_product' %}">Add Product</a></li>#} 
-                                                {#<li><a class="dropdown-item" href="{% url 'edit_products' %}">Edit Products</a></li>#} 
-                                            {% endif %}
-                                            <li><a class="dropdown-item" href="{% url 'sales_report' %}">Sales Report</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'category_report' %}">Category Report</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'region_report' %}">Region Report</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'business_product_report_search' %}">Business Report</a></li>
-                                            <li><a class="dropdown-item" href="{% url 'salesperson_report' %}">Salesperson Report</a></li>
-                                            {#<li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>#}
-                                            {#<li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>#}
+                                {% if perms.app.region_manager %}
+                                    <li><a class="dropdown-item" href="{% url 'store_list' %}">List Stores</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'new_product' %}">New Product</a></li>
+                                    {#<li><a class="dropdown-item" href="{% url 'add_store' %}">Add Store</a></li>#}
+                                    {#<li><a class="dropdown-item" href="{% url 'edit_stores' %}">Edit Stores</a></li>#}
+                                    <li><a class="dropdown-item" href="{% url 'new_manager' %}">Add Manager</a></li>
+                                    {#<li><a class="dropdown-item" href="{% url 'edit_managers' %}">Edit Managers</a></li>#}
+                                {% endif %}
+                                {% if perms.app.manager %}
+                                    <li><a class="dropdown-item" href="{% url 'store_redirect' %}">My store</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'new_employee' %}">Add Associate</a></li>
+                                    {#<li><a class="dropdown-item" href="{% url 'add_product' %}">Add Product</a></li>#} 
+                                    {#<li><a class="dropdown-item" href="{% url 'edit_products' %}">Edit Products</a></li>#} 
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'sales_report' %}">Sales Report</a></li>
+                                <li><a class="dropdown-item" href="{% url 'category_report' %}">Category Report</a></li>
+                                <li><a class="dropdown-item" href="{% url 'region_report' %}">Region Report</a></li>
+                                <li><a class="dropdown-item" href="{% url 'business_product_report_search' %}">Business Report</a></li>
+                                <li><a class="dropdown-item" href="{% url 'salesperson_report' %}">Salesperson Report</a></li>
+                                {#<li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>#}
+                                {#<li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>#}
 
                             </ul>
                         </li>
@@ -104,6 +98,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="userDropdown">
                             {% if user.is_authenticated %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'update_profile' %}">Account</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
