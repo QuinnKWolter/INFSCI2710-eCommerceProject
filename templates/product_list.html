@@ -8,7 +8,6 @@
             <tr>
                 <th>Image</th>
                 <th>Name</th>
-                <th>Price</th>
                 <th>Stock</th>
                 <th>Rating</th>
                 <th>Price</th>
@@ -26,9 +25,6 @@
                 </td>
                 <td>
                     <a href="{% url 'product_page' product.id %}">{{ product.name }}</a>
-                </td>
-                <td>
-                    ${{ product.price}}
                 </td>
                 <td>
                     {{ product.total_stock }}

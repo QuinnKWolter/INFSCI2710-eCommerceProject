@@ -42,19 +42,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-                    <!-- Administrative Interface Links -->
-                    {% if request.user.is_staff %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Admin
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                            {#<li><a class="dropdown-item" href="{% url 'admin' %}">Admin Home</a></li>#}
-                            {#<li><a class="dropdown-item" href="{% url 'manage_users' %}">Manage Users</a></li>#}
-                            {#<li><a class="dropdown-item" href="{% url 'manage_products' %}">Manage Products</a></li>#}
-                        </ul>
-                    </li>
-                    {% endif %}
                     {% if perms.app.associate %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Management</a>
