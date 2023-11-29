@@ -49,12 +49,13 @@ urlpatterns = [
     path('stores/', views.store_list, name='store_list'),
     path('stores/redirect', views.store_redirect, name='store_redirect'),
     path('stores/<int:store_id>/', views.store_page, name='store_page'),
+    path('stores/delete/<int:store_id>/', views.delete_store, name='delete_store'),
     path("inventory/<int:store_id>", views.add_inventory, name = 'add_inventory'),
 
     # Store and Inventory Management URLs
     path('inventory/', views.inventory, name='inventory'),
     path('inventory/update/<int:product_id>/', views.update_inventory, name='update_inventory'),
-
+    path('inventory/delete/<int:inventory_id>', views.delete_inventory, name='delete_inventory'),
     # Data Aggregation and Reporting URLs
     path('reports/sales/', views.sales_report, name='sales_report'),
     path('reports/category/', views.category_report, name='category_report'),

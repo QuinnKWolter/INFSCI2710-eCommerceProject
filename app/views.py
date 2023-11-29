@@ -613,15 +613,20 @@ def transaction_history(request):
         customer = Customer.objects.get(id = request.user.id)
 
         if(user.is_staff):
-            transactions = TransactionItem.objects.filter()   
+            transactions = Transaction.objects.filter()  
+            # transactions = TransactionItem.objects.filter()   
         elif user.has_perm("app.region_manager"):
             salesperson = Salesperson.objects.get(pk = customer.pk)
-            transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+            # transactions = TransactionItem.objects.filter(product__store__region = salesperson.store.region)
+            transactions = Transaction.objects.filter()  
         elif user.has_perm("app.associate"):
             salesperson = Salesperson.objects.get(pk = customer.pk)
-            transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
+            transactions = Transaction.objects.filter(store = salesperson.store)
+            # transactions = TransactionItem.objects.filter(product__store__id = salesperson.store.id)
         else:
-            transactions = TransactionItem.objects.filter(transaction__customer=customer)
+            # transactions = TransactionItem.objects.filter(transaction__customer=customer)
+            transactions = Transaction.objects.filter(customer=customer)
+            
         transactions = transactions.order_by('-pk')
         return render(request, 'transaction_history.html', {'transactions': transactions})
     else:
@@ -864,7 +869,26 @@ def add_inventory(request, store_id):
         else:
             form = newInventory()
         return render (request, "add_inventory.html", {"form":form})
-    
+def delete_store(request, store_id):
+    user = request.user
+    if user.has_perm("app.region_manager"):
+        store = Store.objects.get(id = store_id)
+        store.delete()
+    return redirect(store_list)
+def delete_inventory(request, inventory_id):
+    user = request.user
+    if user.has_perm("app.manager"):
+        inventory = Inventory.objects.get(id = inventory_id)
+        store_id = inventory.store.id
+        inventory.delete()
+        return redirect(store_page, store_id=store_id )
+    return redirect("/")
+def delete_product(request, product_id):
+    user = request.user
+    if user.has_perm("app.region_manager"):
+        product = Product.objects.get(id = product_id)
+        product.delete()
+    return redirect("/")
 def new_product(request):
     user = request.user
     if user.has_perm("app.region_manager"):    

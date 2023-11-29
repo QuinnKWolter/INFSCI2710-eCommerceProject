@@ -73,6 +73,13 @@ class Product(models.Model):
             total = w["total"]
         return total
 
+    def no_inventory(self):
+        inventories = Inventory.objects.filter(product = self)
+        if len(inventories)> 0:
+            return False
+        else:
+            return True
+        
         
 # inventory model
 class Inventory(models.Model):
@@ -215,12 +222,22 @@ class Transaction(models.Model):
     def __str__(self):
         return f'Transaction {self.id} - {self.status}'
     
-    def get_items(self):
+    def reciept(self):
         items = TransactionItem.objects.filter(transaction = self)
         return_text = ""
+        cost = 0
         for item in items:
-            return_text = return_text + str(item.quantity) + ' ' + item.product.name + ' $' +str(item.price)+ ','
+            if item.inventory:
+                cost = cost + item.price
+                return_text = return_text + str(item.quantity) + ' ' + item.inventory.product.name + ' $' +str(item.price)+ ','
+        if cost < self.total_price:
+            dif = self.total_price - cost
+            return_text = return_text + " $" + str(dif) + " spent on deleted products"
         return return_text     
+    def get_items_list(self):
+        items = TransactionItem.objects.filter(transaction = self)
+        return items   
+
 
 
 # TransactionItem Model
